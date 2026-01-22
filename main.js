@@ -310,6 +310,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     workScrollTrigger = workTimeline.scrollTrigger;
+
+    const footerSpacer = document.querySelector('.footer-spacer');
+    const footer = document.querySelector('.site-footer');
+    if (footerSpacer) {
+      if (isCompact) {
+        footerSpacer.style.height = '0px';
+      } else {
+        const requiredScroll = getScrollAmount() + getRevealAmount();
+        const remainingHeight =
+          (servicesSection ? servicesSection.offsetHeight : 0) +
+          (footer ? footer.offsetHeight : 0);
+        const spacerHeight = Math.max(0, requiredScroll - remainingHeight);
+        footerSpacer.style.height = `${spacerHeight}px`;
+      }
+    }
   };
 
   initWorkScroll();
