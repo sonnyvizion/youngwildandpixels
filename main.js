@@ -443,6 +443,19 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   initMarqueeScroll();
+
+  const footerAccordions = document.querySelectorAll('.footer-accordion');
+  if (footerAccordions.length) {
+    footerAccordions.forEach((accordion) => {
+      const toggle = accordion.querySelector('.footer-accordion-toggle');
+      if (!toggle) return;
+      toggle.addEventListener('click', () => {
+        if (!window.matchMedia('(max-width: 900px)').matches) return;
+        const isCollapsed = accordion.classList.toggle('is-collapsed');
+        toggle.setAttribute('aria-expanded', String(!isCollapsed));
+      });
+    });
+  }
   
   console.log('✓ App initialized');
 });
