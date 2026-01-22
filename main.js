@@ -23,6 +23,9 @@ document.addEventListener('DOMContentLoaded', () => {
     lenis.raf(time * 1000);
   });
   gsap.ticker.lagSmoothing(0);
+  window.addEventListener('load', () => {
+    ScrollTrigger.refresh();
+  });
 
   // Initialize navigation
   initNavigation();
@@ -193,11 +196,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   let workScrollTrigger;
+  let workTimeline;
   let workPreScrollTrigger;
   const initWorkScroll = () => {
     if (workScrollTrigger) {
       workScrollTrigger.kill();
       workScrollTrigger = null;
+    }
+    if (workTimeline) {
+      workTimeline.kill();
+      workTimeline = null;
     }
     if (workPreScrollTrigger) {
       workPreScrollTrigger.kill();
@@ -207,43 +215,101 @@ document.addEventListener('DOMContentLoaded', () => {
     const workSection = document.querySelector('.work-section');
     const workPin = document.querySelector('.work-pin');
     const workTrack = document.querySelector('.work-track');
+    const servicesSection = document.querySelector('.services-section');
     if (!workSection || !workTrack || !workPin) return;
+    const isCompact = window.matchMedia('(max-width: 1024px)').matches;
 
     const getScrollAmount = () => {
-      const endPadding = Math.max(0, workPin.clientWidth * 0.16);
-      return Math.max(0, workTrack.scrollWidth - workPin.clientWidth + endPadding);
+      const trackStyles = getComputedStyle(workTrack);
+      const paddingRight = parseFloat(trackStyles.paddingRight) || 0;
+      return Math.max(0, workTrack.scrollWidth - workPin.clientWidth + paddingRight);
     };
-    const preOffset = () => Math.min(160, getScrollAmount() * 0.2);
+    const getRevealAmount = () => Math.max(0, window.innerHeight);
+    const getPreOffset = () => Math.min(120, getScrollAmount() * 0.12);
+    const revealDelay = Math.max(0, window.innerHeight * 0.35);
+    const fadeAmount = Math.max(0, window.innerHeight * 0.10);
+    const fadeAdvance = Math.max(0, window.innerHeight * 0.4);
 
-    workPreScrollTrigger = gsap.to(workTrack, {
-      x: () => -preOffset(),
-      ease: 'none',
-      scrollTrigger: {
-        trigger: workSection,
-        start: 'top bottom',
-        end: 'bottom top',
-        scrub: true,
-        invalidateOnRefresh: true
+    gsap.set(workTrack, { x: 0 });
+    gsap.set(workSection, { autoAlpha: 1 });
+    if (servicesSection) {
+      gsap.set(servicesSection, { y: '100vh' });
+    }
+
+    if (isCompact) {
+      gsap.set(workTrack, { x: 0 });
+      if (servicesSection) {
+        gsap.set(servicesSection, { y: 0, clearProps: 'transform' });
+        workTimeline = gsap.timeline({
+          defaults: { ease: 'none' },
+          scrollTrigger: {
+            trigger: servicesSection,
+            start: 'top bottom',
+            end: 'top top',
+            scrub: true,
+            pin: workSection,
+            pinSpacing: false,
+            anticipatePin: 1,
+            invalidateOnRefresh: true
+          }
+        });
       }
-    }).scrollTrigger;
-
-    workScrollTrigger = gsap.fromTo(
-      workTrack,
-      { x: () => -preOffset() },
-      {
-        x: () => -getScrollAmount(),
+    } else {
+      workPreScrollTrigger = gsap.to(workTrack, {
+        x: () => -getPreOffset(),
         ease: 'none',
         scrollTrigger: {
           trigger: workSection,
+          start: 'top bottom',
+          end: 'top top',
+          scrub: true,
+          invalidateOnRefresh: true
+        }
+      }).scrollTrigger;
+
+      workTimeline = gsap.timeline({
+        defaults: { ease: 'none' },
+        scrollTrigger: {
+          trigger: workSection,
           start: 'top top',
-          end: () => `+=${getScrollAmount()}`,
-          pin: true,
+          end: () => `+=${getScrollAmount() + getRevealAmount()}`,
+          pin: workSection,
+          pinSpacing: false,
           scrub: true,
           anticipatePin: 1,
           invalidateOnRefresh: true
         }
+      });
+
+      workTimeline.fromTo(
+        workTrack,
+        { x: () => -getPreOffset() },
+        {
+          x: () => -(getScrollAmount() + getPreOffset()),
+          duration: getScrollAmount(),
+          immediateRender: false
+        }
+      );
+
+      if (servicesSection) {
+        workTimeline.to({}, { duration: revealDelay });
+        workTimeline.to(
+          servicesSection,
+          {
+            y: 0,
+            duration: getRevealAmount()
+          },
+          '>'
+        );
+        workTimeline.to(
+          workSection,
+          { autoAlpha: 0, ease: 'none', duration: fadeAmount },
+          `>-${fadeAmount + fadeAdvance}`
+        );
       }
-    ).scrollTrigger;
+    }
+
+    workScrollTrigger = workTimeline.scrollTrigger;
   };
 
   initWorkScroll();
@@ -260,29 +326,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const servicesSection = document.querySelector('.services-section');
-  if (workSection && servicesSection) {
-    gsap.set(servicesSection, { y: '100vh' });
-    gsap.to(servicesSection, {
-      y: 0,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: servicesSection,
-        start: 'top bottom-=20vh',
-        end: 'top top',
-        scrub: true,
-        pin: workSection,
-        pinSpacing: false,
-        anticipatePin: 1,
-        invalidateOnRefresh: true,
-        onLeave: () => {
-          gsap.set(workSection, { autoAlpha: 0, pointerEvents: 'none' });
-        },
-        onEnterBack: () => {
-          gsap.set(workSection, { autoAlpha: 1, pointerEvents: 'auto' });
-        }
-      }
-    });
-  }
 
   const serviceBars = gsap.utils.toArray('.services-bar');
   if (serviceBars.length) {
@@ -321,6 +364,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     );
+  }
+
+  const workCards = gsap.utils.toArray('.work-card');
+  if (workCards.length) {
+    gsap.set(workCards, { autoAlpha: 0 });
+    ScrollTrigger.batch(workCards, {
+      start: 'top 85%',
+      onEnter: (batch) =>
+        gsap.to(batch, {
+          autoAlpha: 1,
+          duration: 0.9,
+          ease: 'power1.out',
+          stagger: 0.1
+        }),
+      onEnterBack: (batch) =>
+        gsap.to(batch, {
+          autoAlpha: 1,
+          duration: 0.9,
+          ease: 'power1.out',
+          stagger: 0.1
+        })
+    });
   }
 
   let marqueeTriggers = [];

@@ -76,6 +76,7 @@ export function initNavigation() {
     hamburger.addEventListener('click', () => {
       hamburger.classList.toggle('active');
       nav.classList.toggle('active');
+      document.body.classList.toggle('menu-open', nav.classList.contains('active'));
     });
 
     // Close menu when a link is clicked
@@ -83,6 +84,7 @@ export function initNavigation() {
       link.addEventListener('click', () => {
         hamburger.classList.remove('active');
         nav.classList.remove('active');
+        document.body.classList.remove('menu-open');
       });
     });
   }
@@ -98,4 +100,3 @@ export function initNavigation() {
     }
   });
 }
-
