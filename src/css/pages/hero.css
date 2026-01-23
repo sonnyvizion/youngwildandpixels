@@ -40,8 +40,8 @@
 .hero-mascot {
   position: absolute;
   left: 55%;
-  top: 105%;
-  width: 40%;
+  top: 55%;
+  width: 80%;
   max-width: 40vw;
   height: auto;
   transform: translateX(-50%) rotate(22deg);
@@ -167,6 +167,33 @@
   }
 }
 
+/* Hero mascot breakpoints */
+@media (max-width: 1899px) and (min-width: 1460px) {
+  .hero-mascot {
+    /* TODO: adjust for 1460px–1899px */  
+  width: 80%;
+ 
+  }
+}
+
+@media (max-width: 1459px) and (min-width: 1024px) {
+  .hero-mascot {
+    /* TODO: adjust for 1024px–1459px */
+  top: 55%;
+  width: 80%;
+  max-width: 50vw;
+  }
+}
+
+@media (max-width: 1023px) and (min-width: 769px) {
+  .hero-mascot {
+    /* TODO: adjust for tablets */
+    top: 75%;
+  width: 90%;
+  max-width: 80vw;
+  }
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .hero {
@@ -199,12 +226,19 @@
   }
 
   .hero-mascot {
-    width: 70vw;
-    max-width: 320px;
+    width: 50vh;
+    max-width: 700px;
     min-width: 0;
     left: 60%;
-    bottom: 50%;
+    top: 105%;
     transform: translate(-50%, -50%) rotate(18deg);
+  }
+
+  .hero-panel {
+    right: 5%;
+    bottom: -25px;
+    font-size: 0.85rem;
+    padding: 0.35rem 0.7rem 0.25rem;
   }
 }
 
@@ -212,7 +246,7 @@
 /* Intro section */
 .intro {
   --intro-gap: clamp(6vh, 10vw, 14vh);
-  margin-top: var(--intro-gap);
+  margin-top: 20vh;
   padding: 0 10.7vw 200px;
 }
 
@@ -243,7 +277,7 @@
 
 .intro-marquees {
   position: relative;
-  margin-top: var(--intro-gap);
+  margin-top: 25vh;
   height: clamp(120px, 14vw, 180px);
 }
 
@@ -521,7 +555,7 @@
   letter-spacing: 0.02em;
   position: relative;
   z-index: 2;
-  margin-bottom: clamp(3rem, 6vw, 5rem);
+  margin-bottom: clamp(6rem, 15vw, 10rem);
   width : 50vw;
   transform: translateY(5vw);
 }
@@ -705,6 +739,7 @@
 
   .services-title {
     width: 100vw;
+  }
 }
 
 /* Footer */

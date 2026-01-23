@@ -37,6 +37,18 @@ document.addEventListener('DOMContentLoaded', () => {
       duration: 1,
       ease: 'power1.out'
     });
+
+    gsap.to(heroMascot, {
+      y: '-25vw',
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '.hero',
+        start: 'top top',
+        end: 'bottom top',
+        scrub: true,
+        invalidateOnRefresh: true
+      }
+    });
   }
 
   const heroDisplay = document.querySelector('.hero-display');
