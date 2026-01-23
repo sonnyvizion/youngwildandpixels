@@ -172,6 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const bgBase = rootStyles.getPropertyValue('--color-bg').trim();
     const bgAlt = rootStyles.getPropertyValue('--color-bg-alt').trim();
     const introBands = document.querySelectorAll('.intro-marquee');
+    const introKiss = document.querySelector('.intro-kiss');
     const bgTargets = workSection ? [document.body, workSection] : [document.body];
 
     gsap.fromTo(
@@ -200,6 +201,23 @@ document.addEventListener('DOMContentLoaded', () => {
             trigger: introMarquees,
             start: 'top 40%',
             end: 'top 10%',
+            scrub: true
+          }
+        }
+      );
+    }
+
+    if (introKiss) {
+      gsap.fromTo(
+        introKiss,
+        { y: 180 },
+        {
+          y: -60,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: introMarquees,
+            start: 'top bottom',
+            end: 'top 20%',
             scrub: true
           }
         }
