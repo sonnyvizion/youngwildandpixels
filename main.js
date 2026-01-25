@@ -13,16 +13,21 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log('Young, Wild & Pixel Agency - Loading...');
   
   gsap.registerPlugin(ScrollTrigger);
-  const lenis = new Lenis({
-    smooth: true,
-    lerp: 0.08
-  });
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+  let lenis;
+  if (!prefersReducedMotion && !isTouch) {
+    lenis = new Lenis({
+      lerp: 0.08,
+      smoothWheel: true
+    });
 
-  lenis.on('scroll', ScrollTrigger.update);
-  gsap.ticker.add((time) => {
-    lenis.raf(time * 1000);
-  });
-  gsap.ticker.lagSmoothing(0);
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 1000);
+    });
+    gsap.ticker.lagSmoothing(0);
+  }
   window.addEventListener('load', () => {
     ScrollTrigger.refresh();
   });
@@ -267,23 +272,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (isCompact) {
-      gsap.set(workTrack, { x: 0 });
+      gsap.set(workTrack, { x: 0, clearProps: 'transform' });
+      gsap.set(workSection, { clearProps: 'transform' });
       if (servicesSection) {
         gsap.set(servicesSection, { y: 0, clearProps: 'transform' });
-        workTimeline = gsap.timeline({
-          defaults: { ease: 'none' },
-          scrollTrigger: {
-            trigger: servicesSection,
-            start: 'top bottom',
-            end: 'top top',
-            scrub: true,
-            pin: workSection,
-            pinSpacing: false,
-            anticipatePin: 1,
-            invalidateOnRefresh: true
-          }
-        });
       }
+      return;
     } else {
       workPreScrollTrigger = gsap.to(workTrack, {
         x: () => -getPreOffset(),
@@ -476,6 +470,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const footerAccordions = document.querySelectorAll('.footer-accordion');
   if (footerAccordions.length) {
+    const syncFooterAccordions = () => {
+      const isMobile = window.matchMedia('(max-width: 900px)').matches;
+      footerAccordions.forEach((accordion) => {
+        const toggle = accordion.querySelector('.footer-accordion-toggle');
+        if (!toggle) return;
+        if (isMobile) {
+          accordion.classList.add('is-collapsed');
+          toggle.setAttribute('aria-expanded', 'false');
+        } else {
+          accordion.classList.remove('is-collapsed');
+          toggle.setAttribute('aria-expanded', 'true');
+        }
+      });
+    };
+
     footerAccordions.forEach((accordion) => {
       const toggle = accordion.querySelector('.footer-accordion-toggle');
       if (!toggle) return;
@@ -485,6 +494,8 @@ document.addEventListener('DOMContentLoaded', () => {
         toggle.setAttribute('aria-expanded', String(!isCollapsed));
       });
     });
+    syncFooterAccordions();
+    window.addEventListener('resize', syncFooterAccordions);
   }
   
   console.log('✓ App initialized');
