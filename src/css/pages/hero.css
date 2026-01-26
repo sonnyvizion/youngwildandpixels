@@ -427,7 +427,8 @@ body.marquee-js .footer-marquee-track {
   }
 
   .intro-text {
-    text-align: center;
+    text-align: left;
+    font-size: 2rem;
   }
 
   .intro-marquees {
