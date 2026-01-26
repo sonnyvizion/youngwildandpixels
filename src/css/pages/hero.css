@@ -230,6 +230,7 @@
     margin-top: 1.5rem;
     width: 100%;
     font-size: 1rem;
+    text-align: center;
   }
 
   .hero-marquee {
@@ -244,6 +245,11 @@
 
   .intro-text {
     font-size: clamp(1.8rem, 4.6vw, 58px);
+    text-align: center;
+  }
+
+  .intro-space {
+    width: 0.4em;
   }
 
   .hero-mascot {
@@ -317,8 +323,14 @@
   color: #FFD7CC;
 }
 
+.intro-word-wrap {
+  display: inline-block;
+  white-space: nowrap;
+}
+
 .intro-space {
   display: inline-block;
+  width: 0.35em;
 }
 
 .intro-marquees {
@@ -409,9 +421,13 @@
     
   }
 
+  .intro-text {
+    text-align: center;
+  }
+
   .intro-marquees {
     height: clamp(100px, 18vw, 140px);
-    margin-top: 15vh;
+    margin-top: 20vh;
     --intro-kiss-clip: clamp(6px, 3vw, 16px);
   }
 

@@ -73,6 +73,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     introText.textContent = '';
     const words = text.split(' ');
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+
+    if (isMobile) {
+      words.forEach((word, index) => {
+        const wordWrap = document.createElement('span');
+        wordWrap.className = 'intro-word-wrap';
+        for (const ch of word) {
+          const charSpan = document.createElement('span');
+          charSpan.className = 'intro-char';
+          charSpan.textContent = ch;
+          wordWrap.appendChild(charSpan);
+        }
+        introText.appendChild(wordWrap);
+        if (index < words.length - 1) {
+          const space = document.createElement('span');
+          space.className = 'intro-space';
+          space.textContent = ' ';
+          introText.appendChild(space);
+        }
+      });
+      return [introText];
+    }
+
     words.forEach((word, index) => {
       const span = document.createElement('span');
       span.className = 'intro-word';
@@ -109,12 +132,15 @@ document.addEventListener('DOMContentLoaded', () => {
       line.className = 'intro-line';
       lineWords.forEach((wordSpan, wordIndex) => {
         const word = wordSpan.textContent;
+        const wordWrap = document.createElement('span');
+        wordWrap.className = 'intro-word-wrap';
         for (const ch of word) {
           const charSpan = document.createElement('span');
           charSpan.className = 'intro-char';
           charSpan.textContent = ch;
-          line.appendChild(charSpan);
+          wordWrap.appendChild(charSpan);
         }
+        line.appendChild(wordWrap);
         if (wordIndex < lineWords.length - 1) {
           const space = document.createElement('span');
           space.className = 'intro-space';
