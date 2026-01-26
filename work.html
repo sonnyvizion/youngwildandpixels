@@ -12,10 +12,11 @@
   <!-- Stylesheets -->
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="/src/css/layout/header.css">
+  <link rel="stylesheet" href="/src/css/pages/work.css">
   
   <title>Nos Réalisations - Young, Wild & Pixel Agency</title>
 </head>
-<body>
+<body class="work-page">
   <svg class="liquid-glass-filter" width="0" height="0" aria-hidden="true" focusable="false">
     <filter id="nav-glass" x="-50%" y="-50%" width="200%" height="200%">
       <feTurbulence type="fractalNoise" baseFrequency="0.002 0.02" numOctaves="2" seed="8" result="noise">
@@ -46,9 +47,65 @@
 
   <!-- Main Content -->
   <main>
-    <section>
-      <h1>Our Work</h1>
-      <p>Portfolio de nos réalisations</p>
+    <section class="work-hero">
+      <div class="work-hero-inner">
+        <div class="work-hero-copy">
+          <p class="work-hero-eyebrow">Stuff we’re</p>
+          <h1 class="work-hero-title">proud of.</h1>
+        </div>
+        <div class="work-hero-text">
+          <p>This is where our ideas turned into real projects. Branding, websites, e-commerce, and digital experiences — built with tools like Webflow, Shopify, and custom code animated with GSAP.</p>
+          <p>No templates. No copy-paste. Just carefully crafted work made to stand out.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="work-marquee" aria-hidden="true">
+      <div class="work-marquee-track">
+        <div class="work-marquee-group">
+          <span>Selected works</span>
+          <span>Selected works</span>
+          <span>Selected works</span>
+          <span>Selected works</span>
+          <span>Selected works</span>
+          <span>Selected works</span>
+        </div>
+        <div class="work-marquee-group" aria-hidden="true">
+          <span>Selected works</span>
+          <span>Selected works</span>
+          <span>Selected works</span>
+          <span>Selected works</span>
+          <span>Selected works</span>
+          <span>Selected works</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="work-grid">
+      <article class="work-card">
+        <div class="work-card-media">
+          <img src="/img/work/mercure.jpg" alt="Sonny Marcin portfolio preview" loading="lazy">
+        </div>
+        <p class="work-card-label">Sonny Marcin’s portfolio</p>
+      </article>
+      <article class="work-card work-card--offset">
+        <div class="work-card-media work-card-media--light">
+          <img src="/img/work/work-3.jpg" alt="Sonny Marcin portfolio preview" loading="lazy">
+        </div>
+        <p class="work-card-label">Sonny Marcin’s portfolio</p>
+      </article>
+      <article class="work-card">
+        <div class="work-card-media">
+          <img src="/img/work/brenda-4.jpg" alt="Sonny Marcin portfolio preview" loading="lazy">
+        </div>
+        <p class="work-card-label">Sonny Marcin’s portfolio</p>
+      </article>
+      <article class="work-card work-card--offset">
+        <div class="work-card-media work-card-media--light">
+          <img src="/img/work/rougail2.jpg" alt="Sonny Marcin portfolio preview" loading="lazy">
+        </div>
+        <p class="work-card-label">Sonny Marcin’s portfolio</p>
+      </article>
     </section>
   </main>
 
