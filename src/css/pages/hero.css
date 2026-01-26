@@ -140,6 +140,7 @@
   display: flex;
   align-items: center;
   width: max-content;
+  gap: 3rem;
   padding: 0.35rem 0 0.55rem 0;
   font-family: 'Pix32', sans-serif;
   font-size: 24px;
@@ -151,11 +152,15 @@
   transform: translateY(0);
 }
 
+body.marquee-js .hero-marquee-track,
+body.marquee-js .footer-marquee-track {
+  animation: none;
+}
+
 .hero-marquee-group {
   display: flex;
   align-items: center;
   gap: 3rem;
-  padding-right: 3rem;
 }
 
 @keyframes hero-marquee {
@@ -953,7 +958,6 @@
   display: flex;
   align-items: center;
   gap: 2.5rem;
-  padding-right: 2.5rem;
 }
 
 @keyframes footer-marquee {

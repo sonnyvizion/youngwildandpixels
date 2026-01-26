@@ -198,13 +198,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const introMarquees = document.querySelector('.intro-marquees');
   const workSection = document.querySelector('.work-section');
+  const navBar = document.querySelector('nav');
   if (introMarquees) {
     const rootStyles = getComputedStyle(document.documentElement);
     const bgBase = rootStyles.getPropertyValue('--color-bg').trim();
     const bgAlt = rootStyles.getPropertyValue('--color-bg-alt').trim();
+    const navBase = navBar ? getComputedStyle(navBar).backgroundColor : null;
     const introBands = document.querySelectorAll('.intro-marquee');
     const introKiss = document.querySelector('.intro-kiss');
-    const bgTargets = workSection ? [document.body, workSection] : [document.body];
+    const bgTargets = [
+      document.body,
+      ...(workSection ? [workSection] : [])
+    ];
 
     gsap.fromTo(
       bgTargets,
@@ -220,6 +225,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     );
+
+    if (navBar && navBase) {
+      gsap.fromTo(
+        navBar,
+        { backgroundColor: navBase },
+        {
+          backgroundColor: bgAlt,
+          ease: 'none',
+          immediateRender: false,
+          scrollTrigger: {
+            trigger: introMarquees,
+            start: 'top 40%',
+            end: 'top 10%',
+            scrub: true
+          }
+        }
+      );
+    }
 
     if (introBands.length) {
       gsap.fromTo(
@@ -249,6 +272,25 @@ document.addEventListener('DOMContentLoaded', () => {
             trigger: introMarquees,
             start: 'top bottom',
             end: 'top 20%',
+            scrub: true
+          }
+        }
+      );
+    }
+
+    const servicesSection = document.querySelector('.services-section');
+    if (servicesSection && navBar && navBase) {
+      gsap.fromTo(
+        navBar,
+        { backgroundColor: bgAlt },
+        {
+          backgroundColor: navBase,
+          ease: 'none',
+          immediateRender: false,
+          scrollTrigger: {
+            trigger: servicesSection,
+            start: 'top 80%',
+            end: 'top 40%',
             scrub: true
           }
         }
@@ -493,6 +535,66 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   initMarqueeScroll();
+
+  const loopMarqueeTracks = document.querySelectorAll('.hero-marquee-track, .footer-marquee-track');
+  const initLoopMarquees = () => {
+    loopMarqueeTracks.forEach((track) => {
+      if (!track) return;
+      const container = track.parentElement;
+      if (!container) return;
+
+      if (track._marqueeTween) {
+        track._marqueeTween.kill();
+        track._marqueeTween = null;
+      }
+      if (track._marqueeTicker) {
+        gsap.ticker.remove(track._marqueeTicker);
+        track._marqueeTicker = null;
+      }
+
+      const originals = track._marqueeOriginals || Array.from(track.children);
+      if (!track._marqueeOriginals) {
+        track._marqueeOriginals = originals.map((node) => node.cloneNode(true));
+      }
+
+      track.innerHTML = '';
+      track._marqueeOriginals.forEach((node) => track.appendChild(node.cloneNode(true)));
+
+      const loopWidth = track.scrollWidth;
+      if (!loopWidth) return;
+
+      while (track.scrollWidth < container.clientWidth + loopWidth) {
+        track._marqueeOriginals.forEach((node) => track.appendChild(node.cloneNode(true)));
+      }
+
+      const speed = track.classList.contains('footer-marquee-track') ? 70 : 85;
+      let x = 0;
+      gsap.set(track, { x: 0 });
+      const ticker = () => {
+        const delta = gsap.ticker.deltaRatio(60);
+        x -= (speed / 60) * delta;
+        if (x <= -loopWidth) x += loopWidth;
+        gsap.set(track, { x });
+      };
+      track._marqueeTicker = ticker;
+      gsap.ticker.add(ticker);
+    });
+
+    document.body.classList.add('marquee-js');
+  };
+
+  const readyForMarquee = document.fonts ? document.fonts.ready : Promise.resolve();
+  readyForMarquee.then(() => {
+    initLoopMarquees();
+  });
+
+  let marqueeResizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(marqueeResizeTimer);
+    marqueeResizeTimer = setTimeout(() => {
+      initLoopMarquees();
+    }, 150);
+  });
 
   const footerAccordions = document.querySelectorAll('.footer-accordion');
   if (footerAccordions.length) {
