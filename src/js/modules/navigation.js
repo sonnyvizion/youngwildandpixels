@@ -73,18 +73,36 @@ export function initNavigation() {
   
   // Hamburger menu toggle
   if (hamburger) {
+    const closeDuration = 420;
+    const openMenu = () => {
+      nav.classList.remove('closing');
+      nav.classList.add('active');
+      hamburger.classList.add('active');
+      document.body.classList.add('menu-open');
+    };
+    const closeMenu = () => {
+      if (!nav.classList.contains('active')) return;
+      nav.classList.add('closing');
+      hamburger.classList.remove('active');
+      setTimeout(() => {
+        nav.classList.remove('active');
+        nav.classList.remove('closing');
+        document.body.classList.remove('menu-open');
+      }, closeDuration);
+    };
+
     hamburger.addEventListener('click', () => {
-      hamburger.classList.toggle('active');
-      nav.classList.toggle('active');
-      document.body.classList.toggle('menu-open', nav.classList.contains('active'));
+      if (nav.classList.contains('active')) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
     });
 
     // Close menu when a link is clicked
     navLinks.forEach(link => {
       link.addEventListener('click', () => {
-        hamburger.classList.remove('active');
-        nav.classList.remove('active');
-        document.body.classList.remove('menu-open');
+        closeMenu();
       });
     });
   }

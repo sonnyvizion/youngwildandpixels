@@ -404,7 +404,7 @@
 @media (max-width: 768px) {
   .intro {
     --intro-gap: clamp(5vh, 12vw, 10vh);
-    margin-top: 15vh;
+    margin-top: 5vh;
     padding: 0 1rem 200px;
     
   }
@@ -427,13 +427,20 @@
 }
 
 @media (max-width: 1024px) {
+  .work-section {
+    overflow-x: hidden;
+  }
+
   .work-track {
     flex-direction: column;
     gap: clamp(1.5rem, 4vw, 3rem);
+    width: 100%;
+    max-width: 100%;
   }
 
   .work-card {
     width: 100%;
+    max-width: 100%;
   }
 
   .work-pin {
@@ -571,7 +578,7 @@
   }
 
   .work-card {
-    flex-basis: 85vw;
+    flex-basis: auto;
   }
 
   .services-title {
@@ -613,6 +620,10 @@
 
   .services-section {
     width: 100%;
+  }
+
+  .footer-marquee-track {
+    font-size: 18px !important;
   }
 }
 
@@ -850,6 +861,9 @@
 
   .services-right {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    justify-items: start;
+    width: 100%;
+    margin-left: 15px;
   }
 
   .services-list {
@@ -1052,6 +1066,10 @@
     pointer-events: none;
     cursor: default;
   }
+
+  .footer-accordion-toggle::after {
+    display: none;
+  }
 }
 
 .footer-col a {
@@ -1117,6 +1135,7 @@
 
   .footer-left {
     align-items: center;
+    margin-bottom: 25px;
   }
 
   .footer-tagline {

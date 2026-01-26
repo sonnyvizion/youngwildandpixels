@@ -149,6 +149,7 @@ nav a.pill-active {
     width: 86vw;
     height: 100vh;
     transform: translateX(100%);
+    transform-origin: right center;
     flex-direction: column;
     gap: 0.45rem;
     border-radius: 0;
@@ -161,8 +162,12 @@ nav a.pill-active {
     box-shadow: none;
     align-items: flex-start;
     justify-content: flex-start;
-    transition: transform 0.65s cubic-bezier(0.22, 1.25, 0.32, 1);
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
     will-change: transform;
+  }
+  
+  body.menu-open {
+    overflow: hidden;
   }
 
   nav::before {
@@ -172,6 +177,18 @@ nav a.pill-active {
   /* Show nav when active */
   nav.active {
     transform: translateX(0);
+    animation: nav-panel-bounce 560ms cubic-bezier(0.22, 1, 0.32, 1) both;
+  }
+
+  nav.closing {
+    transform: translateX(100%);
+    animation: none;
+  }
+
+  @keyframes nav-panel-bounce {
+    0% { transform: translateX(100%) scaleX(1); }
+    75% { transform: translateX(0) scaleX(1.06); }
+    100% { transform: translateX(0) scaleX(1); }
   }
 
   nav a {
@@ -185,16 +202,18 @@ nav a.pill-active {
     letter-spacing: 0.05em;
     text-transform: none;
     color: var(--color-text);
-    transform: translateX(-25px);
+    transform: translateX(0);
   }
 
   .nav-logo {
-    width: 110px;
-    height: 110px;
+    width: 70px;
+    height: 70px;
     margin-top: auto;
-    align-self: center;
+    margin-right: 25px;
+    align-self: end;
     display: block;
     opacity: 0.9;
+    margin-bottom: 100px;
   }
 
   nav a.active {
@@ -221,7 +240,7 @@ nav a.pill-active {
     align-self: center;
     margin-left: auto;
     z-index: 1200;
-    margin-right: 15px
+    
   }
 
   .hamburger span {
@@ -239,15 +258,39 @@ nav a.pill-active {
   .hamburger.active span:nth-child(1) {
     transform: rotate(45deg) translate(6px, 6px);
     background-color: var(--color-text);
+    animation: burger-top-bounce 320ms cubic-bezier(0.16, 1.4, 0.3, 1) both;
+    animation-delay: 0ms;
   }
 
   .hamburger.active span:nth-child(2) {
     opacity: 0;
+    animation: burger-mid-bounce 260ms ease-out both;
+    animation-delay: 40ms;
   }
 
   .hamburger.active span:nth-child(3) {
     transform: rotate(-45deg) translate(6px, -6px);
     background-color: var(--color-text);
+    animation: burger-bot-bounce 340ms cubic-bezier(0.16, 1.4, 0.3, 1) both;
+    animation-delay: 80ms;
+  }
+
+  @keyframes burger-top-bounce {
+    0% { transform: rotate(0) translate(0, 0); }
+    55% { transform: rotate(45deg) translate(7px, 7px) scale(1.1); }
+    100% { transform: rotate(45deg) translate(6px, 6px) scale(1); }
+  }
+
+  @keyframes burger-mid-bounce {
+    0% { opacity: 1; transform: scaleX(1); }
+    55% { opacity: 0.2; transform: scaleX(1.12); }
+    100% { opacity: 0; transform: scaleX(1); }
+  }
+
+  @keyframes burger-bot-bounce {
+    0% { transform: rotate(0) translate(0, 0); }
+    55% { transform: rotate(-45deg) translate(7px, -7px) scale(1.1); }
+    100% { transform: rotate(-45deg) translate(6px, -6px) scale(1); }
   }
 }
 
