@@ -109,6 +109,17 @@ export function initNavigation() {
   
   // Initialize on page load
   updateActiveLink();
+
+  // Ensure the pill sits on "Work" for project pages without changing link color.
+  if (document.body.classList.contains('project-page')) {
+    const activeLink = document.querySelector('nav a.active');
+    if (activeLink) activeLink.classList.remove('active');
+    const workLink = document.querySelector('nav a[href="work.html"]');
+    if (workLink) {
+      workLink.classList.add('active', 'pill-active');
+      animatePillToLink(workLink);
+    }
+  }
   
   // Handle window resize
   window.addEventListener('resize', () => {
