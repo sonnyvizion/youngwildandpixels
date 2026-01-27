@@ -14,7 +14,11 @@ export default defineConfig({
         main: 'index.html',
         about: 'about.html',
         contact: 'contact.html',
-        work: 'work.html'
+        work: 'work.html',
+        brenda: 'brenda.html',
+        mercure: 'mercure.html',
+        rougail: 'rougail.html',
+        sonnyvizion: 'sonnyvizion.html'
       }
     }
   }
