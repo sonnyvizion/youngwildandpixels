@@ -441,8 +441,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   initWorkScroll();
 
-  const lottieEl = document.querySelector('[data-lottie]');
-  if (lottieEl) {
+  const lottieEls = document.querySelectorAll('[data-lottie]');
+  lottieEls.forEach((lottieEl) => {
     lottie.loadAnimation({
       container: lottieEl,
       renderer: 'svg',
@@ -450,7 +450,78 @@ document.addEventListener('DOMContentLoaded', () => {
       autoplay: true,
       path: lottieEl.getAttribute('data-lottie')
     });
-  }
+  });
+
+  const initPageLoader = () => {
+    const loader = document.querySelector('#page-loader');
+    if (!loader) return;
+
+    const path = window.location.pathname.replace(/\/+$/, '');
+    const isHome =
+      path === '' ||
+      path.endsWith('/index.html') ||
+      path.endsWith('/youngwildandpixels') ||
+      path.endsWith('/youngwildandpixels/index.html');
+
+    if (!isHome) {
+      loader.remove();
+      return;
+    }
+
+    const ref = document.referrer;
+    if (ref) {
+      try {
+        const refUrl = new URL(ref);
+        const refPath = refUrl.pathname.replace(/\/+$/, '');
+        const refIsHome =
+          refPath === '' ||
+          refPath.endsWith('/index.html') ||
+          refPath.endsWith('/youngwildandpixels') ||
+          refPath.endsWith('/youngwildandpixels/index.html');
+        if (refUrl.origin === window.location.origin && !refIsHome) {
+          loader.remove();
+          return;
+        }
+      } catch {
+        // Ignore invalid referrer
+      }
+    }
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const barFill = loader.querySelector('.page-loader-bar-fill');
+    const percentEl = loader.querySelector('.page-loader-percent');
+    const duration = prefersReducedMotion ? 0 : 2.6;
+    const exitDuration = prefersReducedMotion ? 0 : 0.8;
+
+    document.body.classList.add('is-loading');
+    if (barFill) {
+      gsap.to(barFill, { scaleX: 1, duration, ease: 'power1.out' });
+    }
+    if (percentEl) {
+      const progress = { value: 0 };
+      gsap.to(progress, {
+        value: 100,
+        duration,
+        ease: 'power1.out',
+        onUpdate: () => {
+          percentEl.textContent = `${Math.round(progress.value)}%`;
+        }
+      });
+    }
+
+    gsap.to(loader, {
+      yPercent: -100,
+      duration: exitDuration,
+      delay: duration,
+      ease: 'power2.inOut',
+      onComplete: () => {
+        loader.remove();
+        document.body.classList.remove('is-loading');
+      }
+    });
+  };
+
+  initPageLoader();
 
   const servicesSection = document.querySelector('.services-section');
 

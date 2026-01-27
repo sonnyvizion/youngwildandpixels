@@ -2,6 +2,91 @@
    HERO SECTION - Main display
    ============================================== */
 
+.page-loader {
+  position: fixed;
+  inset: 0;
+  background-color: #7b0b0b;
+  border: 2px solid #f2b6a8;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(0);
+}
+
+.page-loader-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  position: relative;
+}
+
+.page-loader-title {
+  font-family: 'PPMori', sans-serif;
+  font-weight: 600;
+  font-size: 6vw;
+  line-height: 0.85;
+  color: #ff7f73;
+  text-align: center;
+  width: 80vw;
+  margin-bottom: -10.2rem;
+  z-index: 0;
+}
+
+.page-loader-title .loader-dks {
+  font-family: 'DKS Grooveziilla', serif;
+  font-weight: 400;
+}
+
+.page-loader-lottie {
+  width: min(520px, 100vw);
+  height: auto;
+  position: relative;
+  z-index: 2;
+}
+
+.page-loader-progress {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: -1.2rem;
+  z-index: 1;
+  margin-top: -11vh
+
+}
+
+.page-loader-bar {
+  width: min(320px, 70vw);
+  height: 6px;
+  background-color: #f2b6a8;
+  border-radius: 999px;
+  overflow: hidden;
+  
+}
+
+.page-loader-bar-fill {
+  height: 100%;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background-color: #ff7f73;
+}
+
+.page-loader-percent {
+  font-family: 'PPMori', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  color: #f2b6a8;
+  min-width: 3ch;
+  text-align: right;
+}
+
+body.is-loading {
+  overflow: hidden;
+}
+
 .hero {
   --marquee-safe: 72px;
   display: flex;
