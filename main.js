@@ -592,6 +592,40 @@ document.addEventListener('DOMContentLoaded', () => {
     );
   }
 
+  const workOverlays = gsap.utils.toArray('.work-card-overlay');
+  if (workOverlays.length) {
+    workOverlays.forEach((overlay) => {
+      const card = overlay.closest('.work-card');
+      if (!card) return;
+
+      gsap.fromTo(
+        overlay,
+        { yPercent: 0 },
+        {
+          yPercent: -100,
+          duration: 1,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: card,
+            start: 'top 80%',
+            toggleActions: 'play none none none',
+            onLeave: () => {
+              overlay.dataset.hidden = '1';
+            }
+          }
+        }
+      );
+
+      card.addEventListener('mouseenter', () => {
+        gsap.to(overlay, { yPercent: 0, duration: 0.45, ease: 'power2.out' });
+      });
+
+      card.addEventListener('mouseleave', () => {
+        gsap.to(overlay, { yPercent: -100, duration: 0.45, ease: 'power2.inOut' });
+      });
+    });
+  }
+
   const workCards = gsap.utils.toArray('.work-card');
   if (workCards.length) {
     gsap.set(workCards, { autoAlpha: 0 });

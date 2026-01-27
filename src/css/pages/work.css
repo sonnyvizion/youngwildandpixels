@@ -140,15 +140,14 @@
 .work-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(2rem, 5vw, 4rem);
-  padding: 8vh 10.7vw 16vh;
+  gap: 15px;
+  padding: 15px;
   background-color: #640002;
 }
 
 .work-card {
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
 }
 
 .work-card--offset {
@@ -156,19 +155,55 @@
 }
 
 .work-card-media {
-  background-color: rgba(255, 255, 255, 0.08);
   padding: 1.2rem;
-  border-radius: 6px;
 }
 
 .work-card-media--light {
-  background-color: rgba(255, 255, 255, 0.06);
+  
+}
+
+.work-card-frame {
+  position: relative;
+  overflow: hidden;
 }
 
 .work-card-media img {
   width: 100%;
   display: block;
-  border-radius: 4px;
+}
+
+
+.work-card-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: #7b0b0b;
+  transform: translateY(0);
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+  z-index: 2;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 1.2rem;
+}
+
+.work-card-overlay-title {
+  font-family: 'PPMori', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #f2b6a8;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.work-card:hover .work-card-overlay {
+  transform: translateY(0);
+}
+
+.work-card:hover .work-card-overlay-title {
+  opacity: 1;
 }
 
 .work-card-label {
@@ -178,6 +213,7 @@
   font-size: 0.95rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+  margin-left: 20px;
 }
 
 @media (max-width: 768px) {
@@ -191,7 +227,7 @@
 
   .work-grid {
     grid-template-columns: 1fr;
-    padding: 6vh 1.5rem 14vh;
+    padding: 6vh 4vw 14vh;
   }
 
   .work-card--offset {
