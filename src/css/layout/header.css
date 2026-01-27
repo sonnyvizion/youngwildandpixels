@@ -61,8 +61,7 @@ nav::before {
   position: absolute;
   inset: 0;
   border-radius: 333px;
-  box-shadow: inset 2px 2px 0 -2px rgba(255, 255, 255, 0.7),
-              inset 0 0 3px 1px rgba(255, 255, 255, 0.55);
+  box-shadow: none;
   z-index: 0;
   pointer-events: none;
 }
@@ -73,7 +72,7 @@ nav::after {
   inset: 0;
   border-radius: 333px;
 
-  filter: url(#nav-glass);
+  filter: none;
   overflow: hidden;
   z-index: -1;
   pointer-events: none;
