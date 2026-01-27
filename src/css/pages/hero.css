@@ -234,7 +234,7 @@ body.marquee-js .footer-marquee-track {
   .hero-tagline {
     margin-top: 1.5rem;
     width: 100%;
-    font-size: 1rem;
+    font-size: 0.9rem;
     text-align: center;
   }
 
@@ -250,7 +250,18 @@ body.marquee-js .footer-marquee-track {
 
   .intro-text {
     font-size: clamp(1.8rem, 4.6vw, 58px);
-    text-align: center;
+    text-align: left;
+    display: block;
+    word-spacing: 0.08em;
+  }
+
+  .intro-word-wrap {
+    display: inline-block;
+    margin-right: 0;
+  }
+
+  .intro-space {
+    display: none;
   }
 
   .intro-space {
@@ -642,6 +653,10 @@ body.marquee-js .footer-marquee-track {
 
   .services-section {
     width: 100%;
+    position: relative;
+    z-index: 3;
+    margin-bottom: calc(var(--services-overlap, 0px) * -1);
+    padding-bottom: calc(14vh + var(--services-overlap, 0px));
   }
 
   .footer-marquee-track {
@@ -1152,6 +1167,8 @@ body.marquee-js .footer-marquee-track {
   .footer-logo {
     position: static;
     margin-top: 2rem;
+    display: flex;
+    justify-content: center;
   }
 
   .footer-left {

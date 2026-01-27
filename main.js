@@ -87,10 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         introText.appendChild(wordWrap);
         if (index < words.length - 1) {
-          const space = document.createElement('span');
-          space.className = 'intro-space';
-          space.textContent = ' ';
-          introText.appendChild(space);
+          introText.appendChild(document.createTextNode(' '));
         }
       });
       return [introText];
@@ -301,6 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let workScrollTrigger;
   let workTimeline;
   let workPreScrollTrigger;
+  let servicesOverlapTween;
   const initWorkScroll = () => {
     if (workScrollTrigger) {
       workScrollTrigger.kill();
@@ -313,6 +311,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (workPreScrollTrigger) {
       workPreScrollTrigger.kill();
       workPreScrollTrigger = null;
+    }
+    if (servicesOverlapTween) {
+      servicesOverlapTween.kill();
+      servicesOverlapTween = null;
     }
 
     const workSection = document.querySelector('.work-section');
@@ -344,6 +346,24 @@ document.addEventListener('DOMContentLoaded', () => {
       gsap.set(workSection, { clearProps: 'transform' });
       if (servicesSection) {
         gsap.set(servicesSection, { y: 0, clearProps: 'transform' });
+      }
+      if (servicesSection && workSection) {
+        const overlap = Math.min(window.innerHeight * 0.25, 220);
+        servicesSection.style.setProperty('--services-overlap', `${overlap}px`);
+        servicesOverlapTween = gsap.fromTo(
+          servicesSection,
+          { y: 0 },
+          {
+            y: -overlap,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: workSection,
+              start: 'bottom bottom',
+              end: 'bottom top',
+              scrub: true
+            }
+          }
+        );
       }
       return;
     } else {
