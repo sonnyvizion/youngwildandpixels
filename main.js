@@ -11,7 +11,7 @@ import lottie from 'lottie-web';
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
   console.log('Young, Wild & Pixel Agency - Loading...');
-  
+
   gsap.registerPlugin(ScrollTrigger);
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
@@ -452,6 +452,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  const initPageTransitions = () => {
+    const links = document.querySelectorAll('a[href]');
+    links.forEach((link) => {
+      const href = link.getAttribute('href');
+      if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
+      if (link.hasAttribute('data-no-transition')) return;
+      link.addEventListener('click', (event) => {
+        if (event.defaultPrevented) return;
+        if (link.target === '_blank' || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        const url = new URL(link.href, window.location.href);
+        if (url.origin !== window.location.origin) return;
+        sessionStorage.setItem('skip-loader', '1');
+      });
+    });
+  };
+
+  initPageTransitions();
+
   const initPageLoader = () => {
     const loader = document.querySelector('#page-loader');
     if (!loader) return;
@@ -468,7 +486,14 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    const navEntry = performance.getEntriesByType('navigation')[0];
+    const navType = navEntry ? navEntry.type : 'navigate';
+    const isReload = navType === 'reload';
+    const skipLoader = sessionStorage.getItem('skip-loader') === '1';
+    if (skipLoader) sessionStorage.removeItem('skip-loader');
+
     const ref = document.referrer;
+    let cameFromOtherPage = false;
     if (ref) {
       try {
         const refUrl = new URL(ref);
@@ -478,13 +503,15 @@ document.addEventListener('DOMContentLoaded', () => {
           refPath.endsWith('/index.html') ||
           refPath.endsWith('/youngwildandpixels') ||
           refPath.endsWith('/youngwildandpixels/index.html');
-        if (refUrl.origin === window.location.origin && !refIsHome) {
-          loader.remove();
-          return;
-        }
+        cameFromOtherPage = refUrl.origin === window.location.origin && !refIsHome;
       } catch {
         // Ignore invalid referrer
       }
+    }
+
+    if ((cameFromOtherPage || skipLoader) && !isReload) {
+      loader.remove();
+      return;
     }
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -494,6 +521,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const exitDuration = prefersReducedMotion ? 0 : 0.8;
 
     document.body.classList.add('is-loading');
+    loader.classList.add('is-active');
     if (barFill) {
       gsap.to(barFill, { scaleX: 1, duration, ease: 'power1.out' });
     }

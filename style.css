@@ -144,6 +144,42 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Page transitions (View Transitions API) */
+@supports (view-transition-name: root) {
+  html {
+    view-transition-name: root;
+  }
+
+  @view-transition {
+    navigation: auto;
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 650ms;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    animation-fill-mode: both;
+  }
+
+  ::view-transition-old(root) {
+    animation-name: page-slide-up;
+  }
+
+  ::view-transition-new(root) {
+    animation-name: page-slide-in;
+  }
+
+  @keyframes page-slide-up {
+    from { transform: translateY(0); opacity: 1; }
+    to { transform: translateY(-100%); opacity: 1; }
+  }
+
+  @keyframes page-slide-in {
+    from { transform: translateY(100%); opacity: 1; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+}
+
 /* ==============================================
    COLORS - CSS Variables
    ============================================== */

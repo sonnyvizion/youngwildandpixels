@@ -12,6 +12,8 @@
   align-items: center;
   justify-content: center;
   transform: translateY(0);
+  opacity: 0;
+  pointer-events: none;
 }
 
 .page-loader-inner {
@@ -50,10 +52,8 @@
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  margin-top: -1.2rem;
+  margin-top: -7.2rem;
   z-index: 1;
-  margin-top: -11vh
-
 }
 
 .page-loader-bar {
@@ -85,6 +85,37 @@
 
 body.is-loading {
   overflow: hidden;
+}
+
+.page-loader.is-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media (max-width: 768px) {
+  .page-loader-title {
+    font-size: clamp(2.4rem, 11vw, 4.2rem);
+    width: 88vw;
+    margin-bottom: -4.8rem;
+  }
+
+  .page-loader-lottie {
+    width: min(240px, 62vw);
+  }
+
+  .page-loader-progress {
+    gap: 0.45rem;
+    margin-top: -2.6rem;
+  }
+
+  .page-loader-bar {
+    width: min(240px, 60vw);
+    height: 5px;
+  }
+
+  .page-loader-percent {
+    font-size: 0.85rem;
+  }
 }
 
 .hero {
