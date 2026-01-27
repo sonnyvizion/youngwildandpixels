@@ -156,8 +156,8 @@ html {
 
   ::view-transition-old(root),
   ::view-transition-new(root) {
-    animation-duration: 650ms;
-    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    animation-duration: 900ms;
+    animation-timing-function: cubic-bezier(0.2, 0.9, 0.25, 1);
     animation-fill-mode: both;
   }
 
