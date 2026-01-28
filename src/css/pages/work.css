@@ -280,6 +280,21 @@
   margin-top: 0;
 }
 
+.work-page:not(.project-page) .work-grid {
+  display: block;
+  columns: 2;
+  column-gap: 15px;
+}
+
+.work-page:not(.project-page) .work-card {
+  break-inside: avoid;
+  margin-bottom: 15px;
+}
+
+.work-page:not(.project-page) .work-card--offset {
+  margin-top: 0;
+}
+
 .project-page .work-grid {
   display: block;
   columns: 2;
