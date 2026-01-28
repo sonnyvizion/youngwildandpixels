@@ -217,13 +217,19 @@ nav a.pill-active {
 
   nav.closing {
     transform: translateX(100%);
-    animation: none;
+    animation: nav-panel-exit 420ms cubic-bezier(0.32, 0.0, 0.67, 0.0) both;
   }
 
   @keyframes nav-panel-bounce {
     0% { transform: translateX(100%) scaleX(1); }
     75% { transform: translateX(0) scaleX(1.06); }
     100% { transform: translateX(0) scaleX(1); }
+  }
+
+  @keyframes nav-panel-exit {
+    0% { transform: translateX(0) scaleX(1); }
+    30% { transform: translateX(0) scaleX(0.98); }
+    100% { transform: translateX(100%) scaleX(1); }
   }
 
   nav a {
@@ -241,7 +247,11 @@ nav a.pill-active {
   }
 
   .lang-switch {
-    display: none;
+    position: static;
+    width: 30%;
+    justify-content: flex-end;
+    margin-top: 1.2rem;
+    margin-left: 52vw;
   }
 
   .nav-logo {
