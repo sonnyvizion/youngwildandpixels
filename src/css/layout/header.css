@@ -143,6 +143,10 @@ nav a {
   width: 90%;
 }
 
+.lang-switch--menu {
+  display: none;
+}
+
 /* Link when pill is over it */
 nav a.pill-active {
   color: var(--color-bg);
@@ -246,12 +250,17 @@ nav a.pill-active {
     transform: translateX(0);
   }
 
-  .lang-switch {
+  .lang-switch--desktop {
+    display: none;
+  }
+
+  .lang-switch--menu {
     position: static;
-    width: 30%;
+    width: 100%;
     justify-content: flex-end;
     margin-top: 1.2rem;
-    margin-left: 52vw;
+    margin-left: 0;
+    display: flex;
   }
 
   .nav-logo {

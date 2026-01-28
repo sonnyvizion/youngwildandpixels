@@ -430,7 +430,7 @@ body.marquee-js .footer-marquee-track {
     width: 300px !important;
     right: 0 !important;
     left: auto;
-    bottom: -20px !important;
+    bottom: 20px !important;
   }
 
   .services-panel {

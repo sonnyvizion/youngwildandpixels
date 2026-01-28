@@ -9,6 +9,14 @@ export function initNavigation() {
   const navPill = document.querySelector('.nav-pill');
   const hamburger = document.querySelector('.hamburger');
   const nav = document.querySelector('nav');
+  const desktopLangSwitch = document.querySelector('.lang-switch--desktop');
+
+  if (nav && desktopLangSwitch && !nav.querySelector('.lang-switch--menu')) {
+    const mobileSwitch = desktopLangSwitch.cloneNode(true);
+    mobileSwitch.classList.remove('lang-switch--desktop');
+    mobileSwitch.classList.add('lang-switch--menu');
+    nav.appendChild(mobileSwitch);
+  }
   
   // Animate pill to target link
   function animatePillToLink(targetLink) {
