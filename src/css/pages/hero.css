@@ -855,7 +855,7 @@ body.marquee-js .footer-marquee-track {
 
 .services-panel {
   position: absolute;
- bottom: 10%;
+ bottom: -0%;
   right: 0%;
   padding: 0.45rem 0.9rem 0.35rem;
   border: 2px solid var(--color-text);
@@ -1341,7 +1341,3 @@ body.marquee-js .footer-marquee-track {
   }
 }
 
-.cache_illu {
-  overflow: hidden;
-      width: 100%
-}
