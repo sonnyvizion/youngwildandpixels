@@ -107,6 +107,42 @@ nav a {
   letter-spacing: 0.07rem;
 }
 
+.lang-switch {
+  position: fixed;
+  top: 54px;
+  right: 10.7vw;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  z-index: 1000;
+}
+
+.lang-switch a {
+  font-family: 'Pix32', sans-serif;
+  font-size: 0.95rem;
+  letter-spacing: 0.15rem;
+  padding: 0.35rem 0.55rem;
+  border-radius: 6px;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.lang-switch a.lang-active {
+  position: relative;
+}
+
+.lang-switch a.lang-active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 1px;
+  height: 2px;
+  background-color: var(--color-text);
+  border-radius: 999px;
+  width: 90%;
+}
+
 /* Link when pill is over it */
 nav a.pill-active {
   color: var(--color-bg);
@@ -202,6 +238,10 @@ nav a.pill-active {
     text-transform: none;
     color: var(--color-text);
     transform: translateX(0);
+  }
+
+  .lang-switch {
+    display: none;
   }
 
   .nav-logo {

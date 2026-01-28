@@ -5,7 +5,7 @@
 import gsap from 'gsap';
 
 export function initNavigation() {
-  const navLinks = document.querySelectorAll('nav a');
+  const navLinks = document.querySelectorAll('nav a.nav-link');
   const navPill = document.querySelector('.nav-pill');
   const hamburger = document.querySelector('.hamburger');
   const nav = document.querySelector('nav');
@@ -63,7 +63,7 @@ export function initNavigation() {
     link.addEventListener('mouseleave', () => {
       link.classList.remove('pill-active');
       // Return pill to active link
-      const activeLink = document.querySelector('nav a.active');
+      const activeLink = document.querySelector('nav a.nav-link.active');
       if (activeLink) {
         activeLink.classList.add('pill-active');
         animatePillToLink(activeLink);
@@ -112,9 +112,9 @@ export function initNavigation() {
 
   // Ensure the pill sits on "Work" for project pages without changing link color.
   if (document.body.classList.contains('project-page')) {
-    const activeLink = document.querySelector('nav a.active');
+    const activeLink = document.querySelector('nav a.nav-link.active');
     if (activeLink) activeLink.classList.remove('active');
-    const workLink = document.querySelector('nav a[href="work.html"]');
+    const workLink = document.querySelector('nav a.nav-link[href="work.html"]');
     if (workLink) {
       workLink.classList.add('active', 'pill-active');
       animatePillToLink(workLink);
@@ -123,7 +123,7 @@ export function initNavigation() {
   
   // Handle window resize
   window.addEventListener('resize', () => {
-    const activeLink = document.querySelector('nav a.active');
+    const activeLink = document.querySelector('nav a.nav-link.active');
     if (activeLink) {
       animatePillToLink(activeLink);
     }

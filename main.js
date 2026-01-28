@@ -68,7 +68,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const introText = document.querySelector('.intro-text');
   const splitIntroLines = () => {
     if (!introText) return [];
-    const text = introText.textContent.trim();
+    if (!introText.dataset.originalText) {
+      introText.dataset.originalText = introText.textContent;
+    }
+    const rawText = introText.dataset.originalText || '';
+    const text = rawText.replace(/\u00A0/g, ' ').replace(/\s+/g, ' ').trim();
     if (!text) return [];
 
     introText.textContent = '';
@@ -470,16 +474,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
   initPageTransitions();
 
+  const initServicesAnchor = () => {
+    const links = document.querySelectorAll('a[href="#services"]');
+    const services = document.querySelector('#services');
+    if (!links.length || !services) return;
+    links.forEach((link) => {
+      link.addEventListener('click', (event) => {
+        event.preventDefault();
+        services.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  };
+
+  initServicesAnchor();
+
   const initPageLoader = () => {
     const loader = document.querySelector('#page-loader');
     if (!loader) return;
 
     const path = window.location.pathname.replace(/\/+$/, '');
-    const isHome =
-      path === '' ||
-      path.endsWith('/index.html') ||
-      path.endsWith('/youngwildandpixels') ||
-      path.endsWith('/youngwildandpixels/index.html');
+    const homePaths = new Set([
+      '',
+      '/index.html',
+      '/fr',
+      '/fr/index.html',
+      '/en',
+      '/en/index.html',
+      '/youngwildandpixels',
+      '/youngwildandpixels/index.html',
+      '/youngwildandpixels/fr',
+      '/youngwildandpixels/fr/index.html',
+      '/youngwildandpixels/en',
+      '/youngwildandpixels/en/index.html'
+    ]);
+    const isHome = homePaths.has(path);
 
     if (!isHome) {
       loader.remove();
@@ -498,11 +526,7 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         const refUrl = new URL(ref);
         const refPath = refUrl.pathname.replace(/\/+$/, '');
-        const refIsHome =
-          refPath === '' ||
-          refPath.endsWith('/index.html') ||
-          refPath.endsWith('/youngwildandpixels') ||
-          refPath.endsWith('/youngwildandpixels/index.html');
+        const refIsHome = homePaths.has(refPath);
         cameFromOtherPage = refUrl.origin === window.location.origin && !refIsHome;
       } catch {
         // Ignore invalid referrer
