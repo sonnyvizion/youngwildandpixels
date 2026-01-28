@@ -295,15 +295,42 @@
   margin-top: 0;
 }
 
+@media (max-width: 1024px) {
+  .work-page:not(.project-page) .work-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 10px;
+    padding-bottom: 10vh
+  }
+
+  .work-page:not(.project-page) .work-card {
+    margin-bottom: 0;
+  }
+}
+
 .project-page .work-grid {
-  display: block;
-  columns: 2;
-  column-gap: 15px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  padding: 10px;
 }
 
 .project-page .work-card {
-  break-inside: avoid;
-  margin-bottom: 15px;
+  margin-bottom: 0;
+}
+
+@media (min-width: 1025px) {
+  .project-page .work-grid {
+    display: block;
+    columns: 2;
+    column-gap: 15px;
+  }
+
+  .project-page .work-card {
+    break-inside: avoid;
+    margin-bottom: 15px;
+  }
 }
 
 .work-card-media {
@@ -428,7 +455,17 @@
 
 @media (max-width: 1024px) {
   .project-page .work-grid {
+    columns: initial;
+    column-count: initial;
+    column-gap: 0;
+    display: grid;
+    grid-template-columns: 1fr;
     padding: 10px;
+  }
+
+  .project-page .work-card {
+    width: 100%;
+    margin-bottom: 10px;
   }
 
   .work-card:hover .work-card-overlay {
@@ -474,6 +511,10 @@
 }
 
 @media (max-width: 768px) {
+
+  .work-card-label {
+    margin-left: 0;
+  }
   .work-hero {
     padding: 12vh 1.5rem 8vh;
   }
@@ -489,7 +530,8 @@
   }
 
   .work-card-media {
-    padding-bottom: 8px;
+    padding: 0px 0px 8px 0px;
+    
   }
 
   .work-card {
@@ -506,14 +548,6 @@
 
   .work-marquee-track {
     font-size: 18px;
-  }
-
-  .project-page .work-grid {
-    columns: 1;
-  }
-
-  .project-page .work-card {
-    margin-bottom: 10px;
   }
 
   .project-hero-cta-row {
