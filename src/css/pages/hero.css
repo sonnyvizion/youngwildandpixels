@@ -878,7 +878,7 @@ body.marquee-js .footer-marquee-track {
   pointer-events: none;
   z-index: 1;
   margin: 0 auto;
-  bottom: -15%;
+  bottom: 0;
 }
 
 .services-panel {
