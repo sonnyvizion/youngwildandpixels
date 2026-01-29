@@ -448,7 +448,7 @@ body.marquee-js .footer-marquee-track {
 
   .services-title {
     margin-bottom: 6vh !important;
-    font-size: 1.8rem;
+    font-size: 1.8rem !important;
     line-height: 1.15;
   }
 }

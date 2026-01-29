@@ -76,6 +76,12 @@ body {
   margin-bottom: -0.12em;
 }
 
+[data-animated-text].services-title .animated-line,
+[data-animated-text].work-title .animated-line {
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+}
+
 a.hover-soon {
   position: relative;
   display: inline-block;
