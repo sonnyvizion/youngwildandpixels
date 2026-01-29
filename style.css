@@ -71,6 +71,11 @@ body {
   padding-bottom: 0.08em;
 }
 
+[data-animated-text].work-hero-eyebrow .animated-line {
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+
 [data-animated-text][data-animated-ready] .animated-line-inner {
   display: inline-block;
   will-change: transform, opacity;
