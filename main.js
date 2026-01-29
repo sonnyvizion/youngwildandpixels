@@ -15,6 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
   gsap.registerPlugin(ScrollTrigger);
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+  if (isTouch) {
+    ScrollTrigger.config({
+      ignoreMobileResize: true,
+      limitCallbacks: true
+    });
+  }
   let lenis;
   if (!prefersReducedMotion && !isTouch) {
     lenis = new Lenis({

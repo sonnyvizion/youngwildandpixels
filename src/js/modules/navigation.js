@@ -15,7 +15,12 @@ export function initNavigation() {
     const mobileSwitch = desktopLangSwitch.cloneNode(true);
     mobileSwitch.classList.remove('lang-switch--desktop');
     mobileSwitch.classList.add('lang-switch--menu');
-    nav.appendChild(mobileSwitch);
+    const navLogo = nav.querySelector('.nav-logo');
+    if (navLogo) {
+      nav.insertBefore(mobileSwitch, navLogo);
+    } else {
+      nav.appendChild(mobileSwitch);
+    }
   }
   
   // Animate pill to target link

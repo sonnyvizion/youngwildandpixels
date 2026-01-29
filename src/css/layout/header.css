@@ -256,11 +256,13 @@ nav a.pill-active {
 
   .lang-switch--menu {
     position: static;
-    width: 100%;
+    width: 30%;
     justify-content: flex-end;
     margin-top: 1.2rem;
     margin-left: 0;
     display: flex;
+    margin-left: 72%;
+    
   }
 
   .nav-logo {

@@ -59,6 +59,32 @@ body {
   overflow-x: hidden;
   overflow-y: auto;
   position: relative;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  html, body {
+    height: auto;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  body {
+    overflow-y: visible;
+    touch-action: pan-y;
+  }
+
+  body::before {
+    content: none;
+    animation: none;
+  }
+
+  nav {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
 }
 
 body.menu-open {
