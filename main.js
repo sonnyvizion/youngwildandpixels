@@ -203,6 +203,178 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  const animatedTextElements = Array.from(document.querySelectorAll('[data-animated-text]'));
+
+  const splitAnimatedText = (element) => {
+    if (!element) return [];
+    if (!element.dataset.originalHtml) {
+      element.dataset.originalHtml = element.innerHTML;
+    } else {
+      element.innerHTML = element.dataset.originalHtml;
+    }
+
+    const wrapper = document.createElement('span');
+    wrapper.innerHTML = element.dataset.originalHtml || '';
+    const tokens = [];
+
+    const pushSpace = () => {
+      if (!tokens.length) return;
+      const lastType = tokens[tokens.length - 1].type;
+      if (lastType !== 'space' && lastType !== 'break') {
+        tokens.push({ type: 'space' });
+      }
+    };
+
+    const pushTextTokens = (text) => {
+      const normalized = text.replace(/\u00A0/g, ' ');
+      const parts = normalized.split(/(\s+)/).filter(Boolean);
+      parts.forEach((part) => {
+        if (/\s+/.test(part)) {
+          pushSpace();
+        } else {
+          tokens.push({ type: 'word', value: part });
+        }
+      });
+    };
+
+    const walkNodes = (nodes) => {
+      nodes.forEach((node) => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          pushTextTokens(node.textContent || '');
+          return;
+        }
+        if (node.nodeType !== Node.ELEMENT_NODE) return;
+        const tag = node.tagName.toLowerCase();
+        if (tag === 'br') {
+          tokens.push({ type: 'break' });
+          return;
+        }
+        tokens.push({ type: 'element', value: node.cloneNode(true) });
+      });
+    };
+
+    walkNodes(Array.from(wrapper.childNodes));
+
+    element.innerHTML = '';
+    tokens.forEach((token) => {
+      if (token.type === 'word') {
+        const wordSpan = document.createElement('span');
+        wordSpan.className = 'animated-word';
+        wordSpan.textContent = token.value;
+        element.appendChild(wordSpan);
+        return;
+      }
+      if (token.type === 'element') {
+        const wordSpan = document.createElement('span');
+        wordSpan.className = 'animated-word';
+        wordSpan.appendChild(token.value);
+        element.appendChild(wordSpan);
+        return;
+      }
+      if (token.type === 'space') {
+        element.appendChild(document.createTextNode(' '));
+        return;
+      }
+      if (token.type === 'break') {
+        element.appendChild(document.createElement('br'));
+      }
+    });
+
+    const wordSpans = Array.from(element.querySelectorAll('.animated-word'));
+    if (!wordSpans.length) return [];
+
+    const lines = [];
+    let currentTop = null;
+    let currentLine = [];
+    wordSpans.forEach((wordSpan) => {
+      const top = wordSpan.offsetTop;
+      if (currentTop === null) currentTop = top;
+      if (Math.abs(top - currentTop) > 2) {
+        lines.push(currentLine);
+        currentLine = [wordSpan];
+        currentTop = top;
+      } else {
+        currentLine.push(wordSpan);
+      }
+    });
+    if (currentLine.length) lines.push(currentLine);
+
+    element.innerHTML = '';
+    const lineInners = [];
+    lines.forEach((lineWords) => {
+      const line = document.createElement('span');
+      line.className = 'animated-line';
+      const inner = document.createElement('span');
+      inner.className = 'animated-line-inner';
+      lineWords.forEach((wordSpan, index) => {
+        inner.appendChild(wordSpan);
+        if (index < lineWords.length - 1) {
+          inner.appendChild(document.createTextNode(' '));
+        }
+      });
+      line.appendChild(inner);
+      element.appendChild(line);
+      lineInners.push(inner);
+    });
+
+    return lineInners;
+  };
+
+  const initAnimatedText = () => {
+    animatedTextElements.forEach((element) => {
+      if (element._animatedTextTimeline) {
+        element._animatedTextTimeline.kill();
+        element._animatedTextTimeline = null;
+      }
+
+      const lineInners = splitAnimatedText(element);
+      if (!lineInners.length) {
+        element.removeAttribute('data-animated-ready');
+        return;
+      }
+
+      element.dataset.animatedReady = 'true';
+
+      if (prefersReducedMotion) {
+        gsap.set(lineInners, { yPercent: 0, opacity: 1 });
+        return;
+      }
+
+      gsap.set(lineInners, { yPercent: 60, opacity: 0 });
+      element._animatedTextTimeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: element,
+          start: 'top 85%',
+          end: 'top 55%',
+          toggleActions: 'play none none reverse'
+        }
+      }).to(lineInners, {
+        yPercent: 0,
+        opacity: 1,
+        duration: 1,
+        ease: 'power2.out',
+        stagger: 0.12
+      });
+    });
+  };
+
+  if (animatedTextElements.length) {
+    const ready = document.fonts ? document.fonts.ready : Promise.resolve();
+    ready.then(() => {
+      initAnimatedText();
+      ScrollTrigger.refresh();
+    });
+
+    let animatedResizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(animatedResizeTimer);
+      animatedResizeTimer = setTimeout(() => {
+        initAnimatedText();
+        ScrollTrigger.refresh();
+      }, 150);
+    });
+  }
+
   const introMarquees = document.querySelector('.intro-marquees');
   const workSection = document.querySelector('.work-section');
   const navBar = document.querySelector('nav');

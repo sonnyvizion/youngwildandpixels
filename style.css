@@ -62,6 +62,25 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
+[data-animated-text] .animated-line {
+  display: block;
+  overflow: hidden;
+}
+
+[data-animated-text].page-loader-title .animated-line {
+  padding-bottom: 0.08em;
+}
+
+[data-animated-text][data-animated-ready] .animated-line-inner {
+  display: inline-block;
+  will-change: transform, opacity;
+  opacity: 0;
+}
+
+[data-animated-text] .animated-word {
+  display: inline-block;
+}
+
 @media (hover: none) and (pointer: coarse) {
   html, body {
     height: auto;
