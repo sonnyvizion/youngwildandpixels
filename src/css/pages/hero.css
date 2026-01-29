@@ -449,6 +449,8 @@ body.marquee-js .footer-marquee-track {
 
   .services-title {
     margin-bottom: 6vh !important;
+    font-size: 1.8rem;
+    line-height: 1.15;
   }
 }
 
@@ -763,6 +765,7 @@ body.marquee-js .footer-marquee-track {
   .work-title {
     font-size: 1.8rem;
     margin-bottom : 5vh;
+    line-height: 1.15;
   }
 
   .work-card {
