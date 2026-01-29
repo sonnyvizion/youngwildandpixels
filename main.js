@@ -375,6 +375,72 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  const initHoverSwapLinks = () => {
+    const footer = document.querySelector('.site-footer');
+    if (!footer) return;
+
+    const lang = (document.documentElement.lang || 'en').toLowerCase();
+    const hoverText = lang.startsWith('fr') ? 'ça arrive !' : 'soon !';
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const targets = new Set();
+
+    footer.querySelectorAll('.footer-accordion-panel#footer-social-links a').forEach((link) => {
+      targets.add(link);
+    });
+
+    footer.querySelectorAll('.footer-col a').forEach((link) => {
+      const text = (link.textContent || '').trim().toLowerCase();
+      if (text === 'whatsapp' || text === 'phone' || text === 'téléphone' || text === 'telephone') {
+        targets.add(link);
+      }
+    });
+
+    targets.forEach((link) => {
+      if (!link.dataset.originalText) {
+        link.dataset.originalText = (link.textContent || '').trim();
+      }
+      if (!link.dataset.hoverText) {
+        link.dataset.hoverText = hoverText;
+      }
+      link.classList.add('hover-soon');
+
+      const setHover = () => {
+        link.textContent = link.dataset.hoverText;
+        link.classList.add('is-hover');
+      };
+      const setOriginal = () => {
+        link.textContent = link.dataset.originalText;
+        link.classList.remove('is-hover');
+      };
+
+      link.addEventListener('mouseenter', setHover);
+      link.addEventListener('mouseleave', setOriginal);
+      link.addEventListener('focus', setHover);
+      link.addEventListener('blur', setOriginal);
+    });
+
+    const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+    if (!isTouch || prefersReducedMotion || targets.size === 0) return;
+
+    const links = Array.from(targets);
+    let index = 0;
+    const cycle = () => {
+      const link = links[index % links.length];
+      index += 1;
+      link.textContent = link.dataset.hoverText;
+      link.classList.add('is-hover');
+      setTimeout(() => {
+        link.textContent = link.dataset.originalText;
+        link.classList.remove('is-hover');
+      }, 1200);
+    };
+
+    cycle();
+    setInterval(cycle, 3500);
+  };
+
+  initHoverSwapLinks();
+
   const introMarquees = document.querySelector('.intro-marquees');
   const workSection = document.querySelector('.work-section');
   const navBar = document.querySelector('nav');
