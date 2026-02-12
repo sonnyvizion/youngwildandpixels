@@ -15,6 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
   gsap.registerPlugin(ScrollTrigger);
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+  let lastViewportWidth = window.innerWidth;
+  const hasMeaningfulResize = () => {
+    if (!isTouch) return true;
+    const widthDelta = Math.abs(window.innerWidth - lastViewportWidth);
+    return widthDelta > 2;
+  };
   if (isTouch) {
     ScrollTrigger.config({
       ignoreMobileResize: true,
@@ -188,8 +194,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let resizeTimer;
     window.addEventListener('resize', () => {
+      if (!hasMeaningfulResize()) return;
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(() => {
+        if (isTouch) lastViewportWidth = window.innerWidth;
         ScrollTrigger.getAll().forEach((st) => {
           if (st.trigger && st.trigger.classList && st.trigger.classList.contains('intro')) {
             st.kill();
@@ -451,10 +459,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const navBase = navBar ? getComputedStyle(navBar).backgroundColor : null;
     const introBands = document.querySelectorAll('.intro-marquee');
     const introKiss = document.querySelector('.intro-kiss');
-    const bgTargets = [
-      document.body,
-      ...(workSection ? [workSection] : [])
-    ];
+    const bgTargets = isTouch
+      ? [document.body]
+      : [
+          document.body,
+          ...(workSection ? [workSection] : [])
+        ];
 
     gsap.fromTo(
       bgTargets,
@@ -1011,8 +1021,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let marqueeResizeTimer;
   window.addEventListener('resize', () => {
+    if (!hasMeaningfulResize()) return;
     clearTimeout(marqueeResizeTimer);
     marqueeResizeTimer = setTimeout(() => {
+      if (isTouch) lastViewportWidth = window.innerWidth;
       initLoopMarquees();
     }, 150);
   });
