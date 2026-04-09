@@ -416,7 +416,7 @@ document.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll(selector).forEach((element) => {
         gsap.fromTo(
           element,
-          { '--media-parallax-y': `${shift}px` },
+          { '--media-parallax-y': '0px' },
           {
             '--media-parallax-y': `${-shift}px`,
             ease: 'none',
@@ -434,6 +434,72 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   initHomeScrollMediaParallax();
+
+  const initImageRevealOnScroll = () => {
+    const revealSelectors = [
+      '.hero-spotlight-img-wrap',
+      '.ai-intro-media',
+      '.ai-service-media',
+      '.work-card-media',
+      '.hero-display',
+      '.footer-display'
+    ];
+    const targets = [
+      ...new Set(
+        gsap.utils.toArray(revealSelectors.join(',')).filter((element) => {
+          if (!(element instanceof HTMLElement)) return false;
+          if (element.dataset.revealReady === '1') return false;
+          return !element.closest('#page-loader');
+        })
+      )
+    ];
+
+    if (!targets.length) return;
+
+    if (prefersReducedMotion) {
+      targets.forEach((element) => {
+        element.dataset.revealReady = '1';
+        gsap.set(element, { clearProps: 'opacity,visibility,transform' });
+      });
+      return;
+    }
+
+    const playReveal = (element, delay = 0) => {
+      gsap.to(element, {
+        autoAlpha: 1,
+        duration: 0.75,
+        delay,
+        ease: 'power2.out'
+      });
+    };
+
+    targets.forEach((element, index) => {
+      element.dataset.revealReady = '1';
+
+      gsap.set(element, {
+        autoAlpha: 0
+      });
+
+      const bounds = element.getBoundingClientRect();
+      const isAlreadyVisible = bounds.top < window.innerHeight * 0.92 && bounds.bottom > 0;
+
+      if (isAlreadyVisible) {
+        playReveal(element, index * 0.04);
+        return;
+      }
+
+      ScrollTrigger.create({
+        trigger: element,
+        start: 'top 88%',
+        once: true,
+        onEnter: () => {
+          playReveal(element, index * 0.02);
+        }
+      });
+    });
+  };
+
+  initImageRevealOnScroll();
 
   // -------------------------------------------------------
   // AI Sections — scroll-triggered animations
@@ -1209,7 +1275,7 @@ document.addEventListener('DOMContentLoaded', () => {
           start: 'top top',
           end: () => `+=${getScrollAmount() + getRevealAmount()}`,
           pin: workSection,
-          pinSpacing: false,
+          pinSpacing: true,
           scrub: true,
           anticipatePin: 1,
           invalidateOnRefresh: true
@@ -1247,18 +1313,8 @@ document.addEventListener('DOMContentLoaded', () => {
     workScrollTrigger = workTimeline.scrollTrigger;
 
     const footerSpacer = document.querySelector('.footer-spacer');
-    const footer = document.querySelector('.site-footer');
     if (footerSpacer) {
-      if (isCompact) {
-        footerSpacer.style.height = '0px';
-      } else {
-        const requiredScroll = getScrollAmount() + getRevealAmount();
-        const remainingHeight =
-          (servicesSection ? servicesSection.offsetHeight : 0) +
-          (footer ? footer.offsetHeight : 0);
-        const spacerHeight = Math.max(0, requiredScroll - remainingHeight);
-        footerSpacer.style.height = `${spacerHeight}px`;
-      }
+      footerSpacer.style.height = '0px';
     }
   };
 
@@ -1470,10 +1526,17 @@ document.addEventListener('DOMContentLoaded', () => {
     workOverlays.forEach((overlay) => {
       const card = overlay.closest('.work-card');
       if (!card) return;
+      const bounds = card.getBoundingClientRect();
+      const isInitiallyVisible = bounds.top < window.innerHeight * 0.92 && bounds.bottom > 0;
+
+      if (isInitiallyVisible) {
+        gsap.set(overlay, { yPercent: -100 });
+        overlay.dataset.hidden = '1';
+      }
 
       gsap.fromTo(
         overlay,
-        { yPercent: 0 },
+        { yPercent: isInitiallyVisible ? -100 : 0 },
         {
           yPercent: -100,
           duration: 1,
@@ -1499,10 +1562,23 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  const workCards = gsap.utils.toArray('.work-card');
+  const workCards = gsap.utils.toArray('body.work-page .work-card, body.project-page .work-card');
   if (workCards.length) {
-    gsap.set(workCards, { autoAlpha: 0 });
-    ScrollTrigger.batch(workCards, {
+    const initiallyVisibleCards = workCards.filter((card) => {
+      const bounds = card.getBoundingClientRect();
+      return bounds.top < window.innerHeight * 0.92 && bounds.bottom > 0;
+    });
+    const deferredCards = workCards.filter((card) => !initiallyVisibleCards.includes(card));
+
+    if (initiallyVisibleCards.length) {
+      gsap.set(initiallyVisibleCards, { autoAlpha: 1 });
+    }
+
+    if (deferredCards.length) {
+      gsap.set(deferredCards, { autoAlpha: 0 });
+    }
+
+    ScrollTrigger.batch(deferredCards, {
       start: 'top 85%',
       onEnter: (batch) =>
         gsap.to(batch, {
