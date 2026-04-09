@@ -23,19 +23,22 @@
   <link rel="alternate" hreflang="fr" href="https://youngwildandpixels.com/fr/contact.html">
   <link rel="alternate" hreflang="x-default" href="https://youngwildandpixels.com/fr/contact.html">
   <link rel="icon" type="image/png" href="/fav.png">
-  <meta name="description" content="Contact - Young, Wild & Pixel Agency">
-  
+  <meta name="description" content="Contact Young, Wild & Pixel Agency to discuss branding, web design, ecommerce, AI workflows and creative production.">
+
   <!-- Preload Fonts -->
   <link rel="preload" href="/fonts/PPMori-Regular.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/PPMori-Black.woff2" as="font" type="font/woff2" crossorigin>
-  
+  <link rel="preload" href="/fonts/Pix32.woff2" as="font" type="font/woff2" crossorigin>
+
   <!-- Stylesheets -->
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="/src/css/layout/header.css">
-  
+  <link rel="stylesheet" href="/src/css/pages/hero.css">
+  <link rel="stylesheet" href="/src/css/pages/contact.css">
+
   <title>Contact - Young, Wild & Pixel Agency</title>
 </head>
-<body>
+<body class="contact-page">
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PCMMDF9C"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -48,24 +51,23 @@
       <feDisplacementMap in="SourceGraphic" in2="noise" scale="18" xChannelSelector="R" yChannelSelector="G"/>
     </filter>
   </svg>
-  <!-- Navigation -->
   <header>
     <a href="index.html" class="logo">
       <img src="/img/logo_YWP.svg" alt="Young, Wild & Pixel Agency Logo" width="80" height="80">
     </a>
-        <nav>
+    <nav>
       <div class="nav-pill"></div>
       <a class="nav-link" href="index.html">Home</a>
       <a class="nav-link" href="work.html">Work</a>
       <a class="nav-link" href="index.html#services">Services</a>
-      <a class="nav-link" href="mailto:contact@youngwildandpixels.com">Contact</a>
+      <a class="nav-link" href="contact.html">Contact</a>
       <img class="nav-logo" src="/img/logo_YWP.svg" alt="YWP Agency logo">
     </nav>
-      
-      <div class="lang-switch lang-switch--desktop" aria-label="Language">
-        <a class="lang-link lang-active" href="contact.html">ENG</a>
-        <a class="lang-link" href="../fr/contact.html">FR</a>
-      </div>
+
+    <div class="lang-switch lang-switch--desktop" aria-label="Language">
+      <a class="lang-link lang-active" href="contact.html">ENG</a>
+      <a class="lang-link" href="../fr/contact.html">FR</a>
+    </div>
     <button class="hamburger" aria-label="Menu">
       <span></span>
       <span></span>
@@ -73,15 +75,176 @@
     </button>
   </header>
 
-  <!-- Main Content -->
-  <main>
-    <section>
-      <h1>Contact</h1>
-      <p>Nous contacter</p>
+  <main class="contact-main">
+    <section class="contact-hero">
+      <div class="contact-copy">
+        <div>
+          <p class="contact-eyebrow">Contact studio</p>
+          <h1 class="contact-title">Let's shape your <span class="contact-title-dks">next move</span></h1>
+        </div>
+        <p class="contact-lead">
+          Brand identity, ecommerce, web design, creative direction or AI workflows:
+          send the context, ambition and constraints. We will reply with something clear and useful.
+        </p>
+      </div>
+    </section>
+
+    <section class="contact-grid">
+      <div class="contact-details">
+        <article class="contact-panel">
+          <span class="contact-panel-kicker">Info</span>
+          <h2 class="contact-panel-title">Direct exchange</h2>
+          <p class="contact-panel-copy">
+            If the brief is already clear, email works best. Otherwise, the form is enough to start the conversation properly.
+          </p>
+          <div class="contact-link-list">
+            <div class="contact-link-row">
+              <span class="contact-link-label">Email</span>
+              <a href="mailto:contact@youngwildandpixels.com">contact@youngwildandpixels.com</a>
+            </div>
+            <div class="contact-link-row">
+              <span class="contact-link-label">Reply</span>
+              <span class="contact-point-value">Within 48 business hours</span>
+            </div>
+            <div class="contact-link-row">
+              <span class="contact-link-label">Base</span>
+              <span class="contact-point-value">Paris · remote projects worldwide</span>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="contact-panel contact-panel--form" id="contact-form">
+        <span class="contact-panel-kicker">Form</span>
+        <h2 class="contact-panel-title">Tell us about the project</h2>
+        <p class="contact-panel-copy">
+          The form opens your email app with a draft already structured for you.
+        </p>
+
+        <form
+          class="contact-form"
+          data-contact-form
+          data-subject-prefix="New project inquiry"
+          data-status-opening="Opening your email app..."
+          data-status-fallback="If nothing opens, email us directly at contact@youngwildandpixels.com."
+        >
+          <div class="contact-form-grid">
+            <div class="contact-field">
+              <label class="contact-label" for="en-contact-name">Name</label>
+              <input class="contact-input" id="en-contact-name" name="name" type="text" placeholder="Your name" required>
+            </div>
+            <div class="contact-field">
+              <label class="contact-label" for="en-contact-email">Email</label>
+              <input class="contact-input" id="en-contact-email" name="email" type="email" placeholder="you@brand.com" required>
+            </div>
+            <div class="contact-field">
+              <label class="contact-label" for="en-contact-company">Company</label>
+              <input class="contact-input" id="en-contact-company" name="company" type="text" placeholder="Brand name">
+            </div>
+            <div class="contact-field">
+              <label class="contact-label" for="en-contact-type">Project type</label>
+              <select class="contact-select" id="en-contact-type" name="projectType" required>
+                <option value="">Select</option>
+                <option>Branding</option>
+                <option>Marketing site</option>
+                <option>E-commerce</option>
+                <option>Redesign</option>
+                <option>AI workflow</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="contact-field">
+              <label class="contact-label" for="en-contact-budget">Budget range</label>
+              <select class="contact-select" id="en-contact-budget" name="budget">
+                <option value="">Select</option>
+                <option>Under 3k</option>
+                <option>3k - 8k</option>
+                <option>8k - 15k</option>
+                <option>15k +</option>
+              </select>
+            </div>
+            <div class="contact-field">
+              <label class="contact-label" for="en-contact-timeline">Timeline</label>
+              <select class="contact-select" id="en-contact-timeline" name="timeline">
+                <option value="">Select</option>
+                <option>ASAP</option>
+                <option>This month</option>
+                <option>Within 1 to 3 months</option>
+                <option>Still defining it</option>
+              </select>
+            </div>
+            <div class="contact-field contact-field--full">
+              <label class="contact-label" for="en-contact-message">Brief</label>
+              <textarea class="contact-textarea" id="en-contact-message" name="message" placeholder="Context, goals, deadline, references, constraints..." required></textarea>
+            </div>
+          </div>
+
+          <div class="contact-submit-row">
+            <button class="contact-submit" type="submit">Prepare email</button>
+            <p class="contact-status" data-contact-status>
+              We usually reply within 48 business hours.
+            </p>
+          </div>
+        </form>
+      </div>
     </section>
   </main>
 
-  <!-- Scripts -->
+  <div class="footer-spacer" aria-hidden="true"></div>
+  <footer class="site-footer">
+    <div class="footer-marquee" aria-hidden="true">
+      <div class="footer-marquee-track">
+        <div class="footer-marquee-group">
+          <span>THANKS FOR VISITING /</span>
+          <span>THANKS FOR VISITING /</span>
+          <span>THANKS FOR VISITING /</span>
+          <span>THANKS FOR VISITING /</span>
+        </div>
+        <div class="footer-marquee-group" aria-hidden="true">
+          <span>THANKS FOR VISITING /</span>
+          <span>THANKS FOR VISITING /</span>
+          <span>THANKS FOR VISITING /</span>
+          <span>THANKS FOR VISITING /</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer-content">
+      <div class="footer-left">
+        <img src="/img/YWP_DISPLAY.png" alt="Young, Wild & Pixel display" class="footer-display">
+        <p class="footer-tagline">Partner with a creative agency <br>that's as ambitious as you are.</p>
+        <a class="footer-cta" href="mailto:contact@youngwildandpixels.com">Contact Us</a>
+      </div>
+      <div class="footer-right">
+        <div class="footer-col footer-accordion">
+          <button class="footer-col-title footer-accordion-toggle" type="button" aria-expanded="true" aria-controls="footer-nav-links">Navigate</button>
+          <div class="footer-accordion-panel" id="footer-nav-links">
+            <a href="index.html">Home</a>
+            <a href="work.html">Work</a>
+            <a href="index.html#services">Services</a>
+          </div>
+        </div>
+        <div class="footer-col footer-accordion">
+          <button class="footer-col-title footer-accordion-toggle" type="button" aria-expanded="true" aria-controls="footer-social-links">Social Media</button>
+          <div class="footer-accordion-panel" id="footer-social-links">
+            <a href="#">Instagram</a>
+            <a href="#">X</a>
+            <a href="#">Behance</a>
+            <a href="#">WhatsApp</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Contact</div>
+          <a href="mailto:contact@youngwildandpixels.com">Mail</a>
+          <a href="#contact-form">Form</a>
+          <a href="index.html#services">Services</a>
+        </div>
+      </div>
+      <div class="footer-logo">
+        <img src="/img/logo_YWP.svg" alt="YWP Agency logo">
+      </div>
+    </div>
+  </footer>
+
   <script type="module" src="/main.js"></script>
 </body>
 </html>

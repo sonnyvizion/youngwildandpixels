@@ -11,11 +11,82 @@ import lottie from 'lottie-web';
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
   console.log('Young, Wild & Pixel Agency - Loading...');
-  const PAGE_LOADER_ENABLED = false;
+  const PAGE_LOADER_ENABLED = true;
+  const SITE_LOADER_SEEN_KEY = 'site-loader-seen';
 
   gsap.registerPlugin(ScrollTrigger);
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+  const homePaths = new Set([
+    '',
+    '/index.html',
+    '/fr',
+    '/fr/index.html',
+    '/en',
+    '/en/index.html',
+    '/youngwildandpixels',
+    '/youngwildandpixels/index.html',
+    '/youngwildandpixels/fr',
+    '/youngwildandpixels/fr/index.html',
+    '/youngwildandpixels/en',
+    '/youngwildandpixels/en/index.html'
+  ]);
+  const getSiteBase = () => {
+    const path = window.location.pathname;
+    if (path === '/youngwildandpixels' || path.startsWith('/youngwildandpixels/')) {
+      return '/youngwildandpixels';
+    }
+    return '';
+  };
+  const isHomePath = () => {
+    const path = window.location.pathname.replace(/\/+$/, '');
+    return homePaths.has(path);
+  };
+  const createPageLoader = () => {
+    if (!PAGE_LOADER_ENABLED) return null;
+
+    let loader = document.querySelector('#page-loader');
+    if (loader) return loader;
+
+    const isFrench = (document.documentElement.lang || '').toLowerCase().startsWith('fr');
+    const title = isFrench
+      ? `Relax,<br><span class="loader-dks">ca</span> arrive !`
+      : `Relax,<br><span class="loader-dks">it's</span> coming!`;
+
+    loader = document.createElement('div');
+    loader.id = 'page-loader';
+    loader.className = 'page-loader';
+    loader.setAttribute('aria-hidden', 'true');
+    loader.innerHTML = `
+      <div class="page-loader-inner">
+        <div class="page-loader-title">${title}</div>
+        <div class="page-loader-lottie" data-lottie="${getSiteBase()}/img/loader.json" aria-label="Loading animation"></div>
+        <div class="page-loader-progress">
+          <div class="page-loader-bar">
+            <div class="page-loader-bar-fill"></div>
+          </div>
+          <div class="page-loader-percent">0%</div>
+        </div>
+      </div>
+    `;
+
+    document.body.prepend(loader);
+    return loader;
+  };
+  const resetPageLoader = (loader) => {
+    if (!loader) return;
+
+    const barFill = loader.querySelector('.page-loader-bar-fill');
+    const percentEl = loader.querySelector('.page-loader-percent');
+
+    gsap.killTweensOf(loader);
+    loader.classList.remove('is-active');
+    document.body.classList.remove('is-loading');
+    gsap.set(loader, { clearProps: 'transform' });
+
+    if (barFill) gsap.set(barFill, { scaleX: 0 });
+    if (percentEl) percentEl.textContent = '0%';
+  };
   let lastViewportWidth = window.innerWidth;
   const hasMeaningfulResize = () => {
     if (!isTouch) return true;
@@ -47,6 +118,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initialize navigation
   initNavigation();
+  if (isHomePath()) {
+    createPageLoader();
+  }
 
   // Hero — new editorial layout animations
   const heroTagline = document.querySelector('.hero-tagline');
@@ -249,52 +323,75 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Same pixelation for spotlight
   const initPixelateSpotlight = () => {
-    const wrap = document.querySelector('.hero-spotlight-img-wrap');
-    if (!wrap || isTouch || prefersReducedMotion) return;
+    if (isTouch || prefersReducedMotion) return;
 
-    const media = wrap.querySelector('img, video');
-    if (!media) return;
+    document.querySelectorAll('.hero-spotlight-img-wrap').forEach((wrap) => {
+      const media = wrap.querySelector('img, video');
+      if (!media) return;
+      const card = wrap.closest('.hero-spotlight-card');
+      const projectTitle = (card?.querySelector('.hero-spotlight-label')?.textContent || '').trim();
 
-    const isVideo = media.tagName === 'VIDEO';
-    const PIXEL_SIZE = 14;
+      let curtain = wrap.querySelector('.hero-gallery-curtain');
+      if (!curtain) {
+        curtain = document.createElement('div');
+        curtain.className = 'hero-gallery-curtain';
+        const title = document.createElement('span');
+        title.className = 'hero-gallery-curtain-title';
+        title.textContent = projectTitle;
+        curtain.appendChild(title);
+        wrap.appendChild(curtain);
+      }
+      curtain.classList.remove('is-visible');
+      let curtainTimer = null;
 
-    const canvas = document.createElement('canvas');
-    canvas.className = 'pixel-canvas';
-    wrap.appendChild(canvas);
-    const ctx = canvas.getContext('2d');
+      const isVideo = media.tagName === 'VIDEO';
+      const PIXEL_SIZE = 14;
 
-    let rafId = null;
-    let pixelSize = 0;
+      const canvas = document.createElement('canvas');
+      canvas.className = 'pixel-canvas';
+      wrap.appendChild(canvas);
+      const ctx = canvas.getContext('2d');
 
-    const drawFrame = () => {
-      const w = wrap.offsetWidth;
-      const h = wrap.offsetHeight;
-      if (!w || !h) return;
-      const ps = Math.max(1, Math.round(pixelSize));
-      canvas.width = Math.ceil(w / ps);
-      canvas.height = Math.ceil(h / ps);
-      canvas.style.width = w + 'px';
-      canvas.style.height = h + 'px';
-      try { ctx.drawImage(media, 0, 0, canvas.width, canvas.height); } catch (_) {}
-    };
+      let rafId = null;
+      let pixelSize = 0;
 
-    const rafLoop = () => { drawFrame(); if (isVideo) rafId = requestAnimationFrame(rafLoop); };
+      const drawFrame = () => {
+        const w = wrap.offsetWidth;
+        const h = wrap.offsetHeight;
+        if (!w || !h) return;
+        const ps = Math.max(1, Math.round(pixelSize));
+        canvas.width = Math.ceil(w / ps);
+        canvas.height = Math.ceil(h / ps);
+        canvas.style.width = w + 'px';
+        canvas.style.height = h + 'px';
+        try { ctx.drawImage(media, 0, 0, canvas.width, canvas.height); } catch (_) {}
+      };
 
-    wrap.addEventListener('mouseenter', () => {
-      cancelAnimationFrame(rafId);
-      gsap.to({ ps: 1 }, {
-        ps: PIXEL_SIZE, duration: 0.35, ease: 'power2.out',
-        onUpdate: function () { pixelSize = this.targets()[0].ps; if (!isVideo) drawFrame(); },
-        onStart: () => { canvas.classList.add('is-visible'); if (isVideo) rafLoop(); }
+      const rafLoop = () => { drawFrame(); if (isVideo) rafId = requestAnimationFrame(rafLoop); };
+
+      wrap.addEventListener('mouseenter', () => {
+        cancelAnimationFrame(rafId);
+        clearTimeout(curtainTimer);
+        curtain.classList.remove('is-visible');
+        curtainTimer = window.setTimeout(() => {
+          curtain.classList.add('is-visible');
+        }, 300);
+        gsap.to({ ps: 1 }, {
+          ps: PIXEL_SIZE, duration: 0.35, ease: 'power2.out',
+          onUpdate: function () { pixelSize = this.targets()[0].ps; if (!isVideo) drawFrame(); },
+          onStart: () => { canvas.classList.add('is-visible'); if (isVideo) rafLoop(); }
+        });
       });
-    });
 
-    wrap.addEventListener('mouseleave', () => {
-      cancelAnimationFrame(rafId);
-      gsap.to({ ps: pixelSize }, {
-        ps: 1, duration: 0.25, ease: 'power1.in',
-        onUpdate: function () { pixelSize = this.targets()[0].ps; if (!isVideo) drawFrame(); },
-        onComplete: () => { canvas.classList.remove('is-visible'); }
+      wrap.addEventListener('mouseleave', () => {
+        cancelAnimationFrame(rafId);
+        clearTimeout(curtainTimer);
+        curtain.classList.remove('is-visible');
+        gsap.to({ ps: pixelSize }, {
+          ps: 1, duration: 0.25, ease: 'power1.in',
+          onUpdate: function () { pixelSize = this.targets()[0].ps; if (!isVideo) drawFrame(); },
+          onComplete: () => { canvas.classList.remove('is-visible'); }
+        });
       });
     });
   };
@@ -782,7 +879,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const items = Array.from(
         meta.querySelectorAll('.hero-spotlight-label, .hero-spotlight-desc')
       );
-      const trigger = meta.closest('.hero-spotlight') || meta;
+      const trigger = meta.closest('.hero-spotlight-card') || meta.closest('.hero-spotlight') || meta;
       setupReveal({
         container: meta,
         items,
@@ -1210,42 +1307,87 @@ document.addEventListener('DOMContentLoaded', () => {
 
   initServicesAnchor();
 
+  const initContactForms = () => {
+    document.querySelectorAll('[data-contact-form]').forEach((form) => {
+      const status = form.querySelector('[data-contact-status]');
+      const submitButton = form.querySelector('button[type="submit"]');
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        if (!form.reportValidity()) return;
+
+        const formData = new FormData(form);
+        const getValue = (key) => (formData.get(key) || '').toString().trim();
+        const name = getValue('name');
+        const email = getValue('email');
+        const company = getValue('company');
+        const projectType = getValue('projectType');
+        const budget = getValue('budget');
+        const timeline = getValue('timeline');
+        const message = getValue('message');
+        const subjectPrefix = form.dataset.subjectPrefix || 'New inquiry';
+        const openingText = form.dataset.statusOpening || 'Opening your email app...';
+        const fallbackText =
+          form.dataset.statusFallback ||
+          'If nothing opened, email us directly at contact@youngwildandpixels.com.';
+
+        const details = [
+          ['Name', name],
+          ['Email', email],
+          ['Company', company],
+          ['Project type', projectType],
+          ['Budget', budget],
+          ['Timeline', timeline],
+          ['', ''],
+          ['Brief', message]
+        ]
+          .filter(([, value], index) => value || index === 6)
+          .map(([label, value]) => (label ? `${label}: ${value}` : ''))
+          .join('\n');
+
+        const subject = [subjectPrefix, name].filter(Boolean).join(' - ');
+        const mailtoUrl =
+          `mailto:contact@youngwildandpixels.com?subject=${encodeURIComponent(subject)}` +
+          `&body=${encodeURIComponent(details)}`;
+
+        if (status) {
+          status.textContent = openingText;
+        }
+        if (submitButton) {
+          submitButton.setAttribute('aria-busy', 'true');
+        }
+
+        window.location.href = mailtoUrl;
+
+        window.setTimeout(() => {
+          if (status) {
+            status.textContent = fallbackText;
+          }
+          if (submitButton) {
+            submitButton.removeAttribute('aria-busy');
+          }
+        }, 900);
+      });
+    });
+  };
+
+  initContactForms();
+
   const initPageLoader = () => {
-    const loader = document.querySelector('#page-loader');
+    const loader = createPageLoader();
     if (!loader) return;
-    if (!PAGE_LOADER_ENABLED) {
-      loader.remove();
-      document.body.classList.remove('is-loading');
-      return;
-    }
 
-    const path = window.location.pathname.replace(/\/+$/, '');
-    const homePaths = new Set([
-      '',
-      '/index.html',
-      '/fr',
-      '/fr/index.html',
-      '/en',
-      '/en/index.html',
-      '/youngwildandpixels',
-      '/youngwildandpixels/index.html',
-      '/youngwildandpixels/fr',
-      '/youngwildandpixels/fr/index.html',
-      '/youngwildandpixels/en',
-      '/youngwildandpixels/en/index.html'
-    ]);
-    const isHome = homePaths.has(path);
+    const isHome = isHomePath();
+    const loaderAlreadySeen = sessionStorage.getItem(SITE_LOADER_SEEN_KEY) === '1';
 
-    if (!isHome) {
-      loader.remove();
+    if (!isHome || loaderAlreadySeen) {
+      resetPageLoader(loader);
       return;
     }
 
     const navEntry = performance.getEntriesByType('navigation')[0];
     const navType = navEntry ? navEntry.type : 'navigate';
     const isReload = navType === 'reload';
-    const skipLoader = sessionStorage.getItem('skip-loader') === '1';
-    if (skipLoader) sessionStorage.removeItem('skip-loader');
 
     const ref = document.referrer;
     let cameFromOtherPage = false;
@@ -1260,8 +1402,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    if ((cameFromOtherPage || skipLoader) && !isReload) {
-      loader.remove();
+    if (cameFromOtherPage && !isReload) {
+      resetPageLoader(loader);
       return;
     }
 
@@ -1294,8 +1436,8 @@ document.addEventListener('DOMContentLoaded', () => {
       delay: duration,
       ease: 'power2.inOut',
       onComplete: () => {
-        loader.remove();
-        document.body.classList.remove('is-loading');
+        sessionStorage.setItem(SITE_LOADER_SEEN_KEY, '1');
+        resetPageLoader(loader);
       }
     });
   };

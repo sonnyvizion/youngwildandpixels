@@ -237,7 +237,7 @@ html {
 
 /* Page transitions (View Transitions API) */
 @supports (view-transition-name: root) {
-  html {
+  :root {
     view-transition-name: root;
   }
 
