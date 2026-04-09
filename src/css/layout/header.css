@@ -15,27 +15,9 @@ header {
   background-color: transparent;
 }
 
-/* Logo */
-.logo {
-  position: fixed;
-  top: 54px;
-  left: 10.7vw;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  z-index: 1000;
-}
-
-.logo img {
-  width: 70px;
-  height: 70px;
-  object-fit: contain;
-  mix-blend-mode: difference;
-}
-
 /* Navigation Island (center viewport) */
 nav {
+  --nav-pill-inset: 5px;
   position: fixed;
   top: 54px;
   left: 50%;
@@ -45,7 +27,7 @@ nav {
   gap: 0.3rem;
   border: 2px solid var(--color-text);
   border-radius: 333px;
-  padding: 5px 5px;
+  padding: var(--nav-pill-inset);
   background-color: rgba(255, 253, 239, 0.55);
   backdrop-filter: blur(26px) saturate(170%);
   -webkit-backdrop-filter: blur(26px) saturate(170%);
@@ -81,9 +63,9 @@ nav::after {
 /* Animated pill background */
 .nav-pill {
   position: absolute;
-  top: 5px;
-  left: 5px;
-  height: calc(100% - 10px);
+  top: var(--nav-pill-inset);
+  left: var(--nav-pill-inset);
+  height: calc(100% - (var(--nav-pill-inset) * 2));
   background-color: var(--color-text);
   border-radius: 333px;
   z-index: 1;
@@ -94,23 +76,24 @@ nav::after {
 }
 
 /* Navigation Links */
-nav a {
-  font-size: 1.15rem;
+nav a.nav-link {
+  font-size: 1rem;
   font-family: 'PPMori', sans-serif;
-  font-weight: 600;
+  font-weight: 400;
   color: var(--color-text);
   text-decoration: none;
-  padding: 0.5rem 1rem;
+  padding: 0.42rem 1rem;
   border-radius: 333px;
   position: relative;
   z-index: 2;
-  letter-spacing: 0.07rem;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
 }
 
 .lang-switch {
   position: fixed;
   top: 54px;
-  right: 10.7vw;
+  right: 2%;
   display: flex;
   align-items: center;
   gap: 0.35rem;
@@ -163,18 +146,6 @@ nav a.pill-active {
   header {
     padding: 1rem 1.5rem;
     justify-content: space-between;
-  }
-
-  .logo {
-    position: static;
-    top: auto;
-    left: auto;
-    margin-right: auto;
-  }
-
-  .logo img {
-    width: 50px;
-    height: 50px;
   }
 
   /* Full-screen mobile nav */
@@ -236,7 +207,7 @@ nav a.pill-active {
     100% { transform: translateX(100%) scaleX(1); }
   }
 
-  nav a {
+  nav a.nav-link {
     font-size: clamp(2rem, 8vw, 3rem);
     padding: 0.1rem 0;
     width: 100%;
@@ -263,17 +234,6 @@ nav a.pill-active {
     display: flex;
     margin-left: 72%;
     
-  }
-
-  .nav-logo {
-    width: 70px;
-    height: 70px;
-    margin-top: auto;
-    margin-right: 25px;
-    align-self: end;
-    display: block;
-    opacity: 0.9;
-    margin-bottom: 100px;
   }
 
   nav a.active {

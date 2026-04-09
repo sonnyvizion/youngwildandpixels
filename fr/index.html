@@ -41,6 +41,7 @@
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="/src/css/layout/header.css">
   <link rel="stylesheet" href="/src/css/pages/hero.css">
+  <link rel="stylesheet" href="/src/css/pages/ai.css">
   
   <title>Young, Wild & Pixel Agency - Création de Sites Web Modernes</title>
 </head>
@@ -49,18 +50,6 @@
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PCMMDF9C"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
-  <div id="page-loader" class="page-loader" aria-hidden="true">
-    <div class="page-loader-inner">
-      <div class="page-loader-title" data-animated-text>Relax,<br><span class="loader-dks">ça</span> arrive !</div>
-      <div class="page-loader-lottie" data-lottie="/img/loader.json" aria-label="Loading animation"></div>
-      <div class="page-loader-progress">
-        <div class="page-loader-bar">
-          <div class="page-loader-bar-fill"></div>
-        </div>
-        <div class="page-loader-percent">0%</div>
-      </div>
-    </div>
-  </div>
   <svg class="liquid-glass-filter" width="0" height="0" aria-hidden="true" focusable="false">
     <filter id="nav-glass" x="-50%" y="-50%" width="200%" height="200%">
       <feTurbulence type="fractalNoise" baseFrequency="0.002 0.02" numOctaves="2" seed="8" result="noise">
@@ -71,16 +60,12 @@
   </svg>
   <!-- Navigation -->
   <header>
-    <a href="index.html" class="logo">
-      <img src="/img/logo_YWP.svg" alt="Young, Wild & Pixel Agency Logo" width="80" height="80">
-    </a>
-        <nav>
+    <nav>
       <div class="nav-pill"></div>
       <a class="nav-link active" href="index.html">Accueil</a>
       <a class="nav-link" href="work.html">Projets</a>
       <a class="nav-link" href="#services">Services</a>
       <a class="nav-link" href="mailto:contact@youngwildandpixels.com">Contact</a>
-      <img class="nav-logo" src="/img/logo_YWP.svg" alt="YWP Agency logo">
     </nav>
       
       <div class="lang-switch lang-switch--desktop" aria-label="Language">
@@ -97,126 +82,176 @@
   <!-- Main Contenu -->
   <main>
     <section class="hero">
-      <div class="hero-content">
-        <div class="hero-visual">
-          <div class="hero-mascot" data-lottie="/img/MASCOTTE SANS BRAS.json" aria-label="Mascotte Young, Wild & Pixel"></div>
-          <img src="/img/YWP_DISPLAY.png" alt="Young, Wild & Pixel Agency Display" class="hero-display">
-          <div class="hero-panel" aria-label="Agency panel">STUDIO</div>
+      <!-- Identity block -->
+      <div class="hero-top">
+        <div class="hero-top-center">
+          <img src="/img/logo_YWP.svg" alt="Young, Wild & Pixel Agency" class="hero-brand-mark">
+          <p class="hero-tagline">
+            Young, Wild &amp; Pixels Agency is a creative web agency crafting standout websites,
+            sharp digital identities, SEO, AI immersion and automation.
+            We make brands look good and work smarter.
+          </p>
         </div>
-        <p class="hero-tagline">L’agence créative qui fait tourner les têtes.<br> Du design bien pensé.<br> Des projets qu’on retient</p>
+        <div class="hero-logos" aria-label="Outils &amp; plateformes">
+          <img src="/img/shopify.svg" alt="Shopify" class="hero-logo">
+          <img src="/img/Webflow.svg" alt="Webflow" class="hero-logo">
+          <img src="/img/sanity.svg" alt="Sanity" class="hero-logo">
+          <img src="/img/Wordpress.svg" alt="WordPress" class="hero-logo">
+          <img src="/img/Framer.svg" alt="Framer" class="hero-logo">
+        </div>
       </div>
-      <div class="hero-marquee" aria-hidden="true">
-        <div class="hero-marquee-track">
-          <div class="hero-marquee-group">
-            <span>agence créative basée à paris /</span>
-            <span>agence créative basée à paris /</span>
-            <span>agence créative basée à paris /</span>
+
+
+      <!-- Project grid
+           Pour utiliser une vidéo à la place d'une image, remplacer :
+             <img src="/img/work/xxx.jpg" alt="..." loading="lazy">
+           par :
+             <video src="/videos/xxx.mp4" autoplay muted loop playsinline></video>
+      -->
+      <div class="hero-gallery">
+        <a class="hero-gallery-card" href="brenda.html">
+          <div class="hero-gallery-img">
+            <img src="/img/work/brenda-4.jpg" alt="Brenda — Identité de marque 2025" loading="lazy">
           </div>
-          <div class="hero-marquee-group" aria-hidden="true">
-            <span>agence créative basée à paris /</span>
-            <span>agence créative basée à paris /</span>
-            <span>agence créative basée à paris /</span>
+          <div class="hero-gallery-meta">
+            <span class="hero-gallery-name">Brenda</span>
+            <span class="hero-gallery-tag">Brand identity · 2025</span>
+          </div>
+        </a>
+        <a class="hero-gallery-card" href="sonnyvizion.html">
+          <div class="hero-gallery-img">
+            <img src="/img/work/work-3.jpg" alt="Sonnyvizion — Portfolio 2025" loading="lazy">
+          </div>
+          <div class="hero-gallery-meta">
+            <span class="hero-gallery-name">Sonnyvizion</span>
+            <span class="hero-gallery-tag">Portfolio · 2025</span>
+          </div>
+        </a>
+        <a class="hero-gallery-card" href="rougail.html">
+          <div class="hero-gallery-img">
+            <img src="/img/work/rougail2.jpg" alt="Le Rougail — 2025" loading="lazy">
+          </div>
+          <div class="hero-gallery-meta">
+            <span class="hero-gallery-name">Le Rougail</span>
+            <span class="hero-gallery-tag">Web design · 2025</span>
+          </div>
+        </a>
+        <a class="hero-gallery-card" href="mercure.html">
+          <div class="hero-gallery-img">
+            <img src="/img/work/mercure.jpg" alt="Mercure — 2026" loading="lazy">
+          </div>
+          <div class="hero-gallery-meta">
+            <span class="hero-gallery-name">Mercure</span>
+            <span class="hero-gallery-tag">E-commerce · 2026</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- Featured / spotlight image -->
+      <div class="hero-spotlight">
+        <div class="hero-spotlight-img-wrap">
+          <img src="/img/work/work-4.jpg" alt="Projet en vedette" class="hero-spotlight-img" loading="lazy">
+        </div>
+        <div class="hero-spotlight-meta">
+          <p class="hero-spotlight-label">Sneaker Concept</p>
+          <p class="hero-spotlight-desc">Product photography &amp; visual identity</p>
+        </div>
+      </div>
+
+      <!-- See more -->
+      <div class="hero-foot">
+        <a href="work.html" class="hero-see-more">See more <span aria-hidden="true">→</span></a>
+      </div>
+    </section>
+    <!-- =============================================
+         AI INTRO — "AI with taste and purpose"
+         ============================================= -->
+    <section class="ai-intro" id="ai">
+      <div class="ai-intro-header">
+        <h2 class="ai-intro-title" data-animated-text>L'IA avec du goût<br>et du sens</h2>
+        <p class="ai-intro-desc">
+          On aide les marques et les entreprises à transformer l'IA en outils
+          concrets pour grandir. Des automatisations sur-mesure avec n8n et Claude,
+          à la formation d'équipes, en passant par la création de contenu IA et la
+          vidéo — on construit des workflows qui libèrent du temps et ouvrent de
+          nouvelles possibilités créatives.
+        </p>
+      </div>
+
+      <div class="ai-intro-media">
+        <!-- Desktop: ia_noeud-169.webp / Mobile: ia_noeud .webp -->
+        <picture>
+          <source media="(min-width: 769px)" srcset="/img/ia_noeud-169.webp">
+          <img src="/img/ia_noeud .webp" alt="Aperçu IA" loading="lazy">
+        </picture>
+        <!-- Ou : <video src="/videos/ai-demo.mp4" autoplay muted loop playsinline></video> -->
+      </div>
+    </section>
+
+    <!-- =============================================
+         AI SERVICES — "Built for the real world"
+         ============================================= -->
+    <section class="ai-services">
+      <div class="ai-services-header">
+        <h2 class="ai-services-title" data-animated-text>Fait pour<br>le monde réel</h2>
+        <p class="ai-services-desc">
+          Notre mission : automatiser les tâches complexes pour les entreprises.
+          On a été testés dans des environnements exigeants, avec de vraies contraintes
+          et de vraies conséquences. On est sortis du labo pour aller sur le terrain.
+        </p>
+      </div>
+
+      <div class="ai-services-grid">
+        <!-- Card 1 : Workflow Automation -->
+        <div class="ai-service-card">
+          <div class="ai-service-media">
+            <img src="/img/work/pf02.jpg" alt="Workflow Automation" loading="lazy">
+          </div>
+          <div class="ai-service-label">
+            <span class="ai-service-name">Workflow<br>Automation</span>
+            <span class="ai-service-tag">n8n · Claude · Make</span>
+          </div>
+        </div>
+
+        <!-- Card 2 : AI Training -->
+        <div class="ai-service-card">
+          <div class="ai-service-media">
+            <img src="/img/work/pf03.jpg" alt="AI Training" loading="lazy">
+          </div>
+          <div class="ai-service-label">
+            <span class="ai-service-name">AI Training</span>
+            <span class="ai-service-tag">Ateliers · Formation</span>
+          </div>
+        </div>
+
+        <!-- Card 3 : Image Generation -->
+        <div class="ai-service-card">
+          <div class="ai-service-media">
+            <img src="/img/work/pf04.jpg" alt="Image Generation" loading="lazy">
+          </div>
+          <div class="ai-service-label">
+            <span class="ai-service-name">Image<br>Generation</span>
+            <span class="ai-service-tag">Midjourney · Flux · ComfyUI</span>
+          </div>
+        </div>
+
+        <!-- Card 4 : Video Production -->
+        <div class="ai-service-card">
+          <div class="ai-service-media">
+            <img src="/img/work/pf06.jpg" alt="Video Production" loading="lazy">
+          </div>
+          <div class="ai-service-label">
+            <span class="ai-service-name">Video<br>Production</span>
+            <span class="ai-service-tag">Runway · Kling · Sora</span>
           </div>
         </div>
       </div>
     </section>
-    <section class="intro">
-      <p class="intro-text">Agence web créative, on met le design, l’UI et l’UX au cœur de chaque projet. On crée des marques et des expériences digitales qui sortent du lot. Design clair. Idées fortes. Résultats concrets.</p>
-      <div class="intro-marquees" aria-hidden="true">
-        <div class="intro-kiss-mask">
-          <img class="intro-kiss" src="/img/kiss.svg" alt="" aria-hidden="true">
-        </div>
-        <div class="intro-marquee intro-marquee--one">
-          <div class="intro-marquee-track" data-marquee-mode="group" data-marquee-vw="-5">
-            <div class="intro-marquee-group">
-              <span>Construit avec <span class="intro-marquee-dks">PIXELS</span> &amp; caractère</span>
-              <span>Construit avec <span class="intro-marquee-dks">PIXELS</span> &amp; caractère</span>
-              <span>Construit avec <span class="intro-marquee-dks">PIXELS</span> &amp; caractère</span>
-            </div>
-            <div class="intro-marquee-group" aria-hidden="true">
-              <span>Construit avec <span class="intro-marquee-dks">PIXELS</span> &amp; caractère</span>
-              <span>Construit avec <span class="intro-marquee-dks">PIXELS</span> &amp; caractère</span>
-              <span>Construit avec <span class="intro-marquee-dks">PIXELS</span> &amp; caractère</span>
-            </div>
-            <div class="intro-marquee-group" aria-hidden="true">
-              <span>Construit avec <span class="intro-marquee-dks">PIXELS</span> &amp; caractère</span>
-              <span>Construit avec <span class="intro-marquee-dks">PIXELS</span> &amp; caractère</span>
-              <span>Construit avec <span class="intro-marquee-dks">PIXELS</span> &amp; caractère</span>
-            </div>
-          </div>
-        </div>
-        <div class="intro-marquee intro-marquee--two">
-          <div class="intro-marquee-track">
-            <div class="intro-marquee-group">
-              <span>L'esprits <span class="intro-marquee-dks">YOUNG</span>. Les idées  <span class="intro-marquee-dks">WILD</span>. <span class="intro-marquee-dks">PIXELS</span> affûtés.</span>
-              <span>L'esprits <span class="intro-marquee-dks">YOUNG</span>. Les idées  <span class="intro-marquee-dks">WILD</span>. <span class="intro-marquee-dks">PIXELS</span> affûtés.</span>
-              <span>L'esprits <span class="intro-marquee-dks">YOUNG</span>. Les idées  <span class="intro-marquee-dks">WILD</span>. <span class="intro-marquee-dks">PIXELS</span> affûtés.</span>
-            </div>
-            <div class="intro-marquee-group" aria-hidden="true">
-              <span><span class="intro-marquee-dks">YOUNG</span> esprits. <span class="intro-marquee-dks">WILD</span> idées. <span class="intro-marquee-dks">PIXELS</span> affûtés.</span>
-              <span><span class="intro-marquee-dks">YOUNG</span> esprits. <span class="intro-marquee-dks">WILD</span> idées. <span class="intro-marquee-dks">PIXELS</span> affûtés.</span>
-              <span><span class="intro-marquee-dks">YOUNG</span> esprits. <span class="intro-marquee-dks">WILD</span> idées. <span class="intro-marquee-dks">PIXELS</span> affûtés.</span>
-            </div>
-            <div class="intro-marquee-group" aria-hidden="true">
-              <span><span class="intro-marquee-dks">YOUNG</span> esprits. <span class="intro-marquee-dks">WILD</span> idées. <span class="intro-marquee-dks">PIXELS</span> affûtés.</span>
-              <span><span class="intro-marquee-dks">YOUNG</span> esprits. <span class="intro-marquee-dks">WILD</span> idées. <span class="intro-marquee-dks">PIXELS</span> affûtés.</span>
-              <span><span class="intro-marquee-dks">YOUNG</span> esprits. <span class="intro-marquee-dks">WILD</span> idées. <span class="intro-marquee-dks">PIXELS</span> affûtés.</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <section class="work-section" id="work">
-      <div class="work-pin">
-        <div class="work-header">
-          <h2 class="work-title" data-animated-text>Moins de blabla, <br>plus de projets </h2>
-        </div>
-        <div class="work-track">
-          <a class="work-card work-card--wide" href="brenda.html">
-            <div class="work-image">
-              <img src="/img/work/brenda-4.jpg" alt="Aperçu du projet Brenda" loading="lazy">
-            </div>
-            <div class="work-meta">
-              <span class="work-name">BRENDA</span>
-              <span class="work-year">2025</span>
-            </div>
-          </a>
-          <a class="work-card" href="sonnyvizion.html">
-            <div class="work-image">
-              <img src="/img/work/work-3.jpg" alt="Aperçu du projet Sonnyvizion" loading="lazy">
-            </div>
-            <div class="work-meta">
-              <span class="work-name">SONNYVIZION</span>
-              <span class="work-year">PORTFOLIO 2025</span>
-            </div>
-          </a>
-          <a class="work-card" href="rougail.html">
-            <div class="work-image">
-              <img src="/img/work/rougail2.jpg" alt="Aperçu du projet Le Rougail" loading="lazy">
-            </div>
-            <div class="work-meta">
-              <span class="work-name">LE ROUGAIL</span>
-              <span class="work-year">2025</span>
-            </div>
-          </a>
-          <a class="work-card" href="mercure.html" aria-disabled="true" tabindex="-1" style="pointer-events: none; cursor: default;">
-            <div class="work-image">
-              <img src="/img/work/mercure.jpg" alt="Aperçu du projet Mercure" loading="lazy">
-            </div>
-            <div class="work-meta">
-              <span class="work-name">MERCURE</span>
-              <span class="work-year">2026</span>
-            </div>
-          </a>
-        </div>
-        <a class="work-cta" href="work.html">Projets sélectionnés</a>
-      </div>
-    </section>
+
     <section class="services-section" id="services">
       <div class="services-title" data-animated-text>Moins de promesses.<br>Plus de résultats</div>
       <div class="services-inner">
         <div class="services-left">
-          <div class="services-panel" aria-label="Chill, on s’occupe de votre marque">Chill. <br> Votre marque est entre de bonnes mains.</div>
           <div class="services-illustration" data-lottie="/img/chill_iphone.json" aria-label="Illustration chill"></div>
         </div>
         <div class="services-right">

@@ -15,12 +15,7 @@ export function initNavigation() {
     const mobileSwitch = desktopLangSwitch.cloneNode(true);
     mobileSwitch.classList.remove('lang-switch--desktop');
     mobileSwitch.classList.add('lang-switch--menu');
-    const navLogo = nav.querySelector('.nav-logo');
-    if (navLogo) {
-      nav.insertBefore(mobileSwitch, navLogo);
-    } else {
-      nav.appendChild(mobileSwitch);
-    }
+    nav.appendChild(mobileSwitch);
   }
   
   // Animate pill to target link
@@ -29,9 +24,10 @@ export function initNavigation() {
     
     const linkRect = targetLink.getBoundingClientRect();
     const navRect = nav.getBoundingClientRect();
+    const pillInset = parseFloat(window.getComputedStyle(navPill).left) || 5;
     
-    // Position relative to nav, accounting for pill left offset (5px)
-    const posX = (linkRect.left - navRect.left) - 9;
+    // Position relative to nav, accounting for the real pill inset.
+    const posX = (linkRect.left - navRect.left) - pillInset;
     const width = linkRect.width;
     
     gsap.to(navPill, {
@@ -141,4 +137,40 @@ export function initNavigation() {
       animatePillToLink(activeLink);
     }
   });
+
+  // ── Nav island hide on scroll-down / show on scroll-up (desktop only) ──
+  let lastScrollY = window.scrollY;
+  let navHidden = false;
+  const NAV_TOP_SHOW = '54px';
+  const NAV_TOP_HIDE = '-100px';
+
+  const onScroll = () => {
+    // Only on desktop (mobile uses drawer)
+    if (window.innerWidth <= 768) return;
+    // Don't interfere while mobile menu is open
+    if (nav.classList.contains('active')) { lastScrollY = window.scrollY; return; }
+
+    const y = window.scrollY;
+    const delta = y - lastScrollY;
+
+    if (y < 80) {
+      // Always show near top
+      if (navHidden) {
+        gsap.to(nav, { top: NAV_TOP_SHOW, duration: 0.4, ease: 'power2.out' });
+        navHidden = false;
+      }
+    } else if (delta > 6 && !navHidden) {
+      // Scrolling down → hide
+      gsap.to(nav, { top: NAV_TOP_HIDE, duration: 0.35, ease: 'power2.in' });
+      navHidden = true;
+    } else if (delta < -6 && navHidden) {
+      // Scrolling up → show
+      gsap.to(nav, { top: NAV_TOP_SHOW, duration: 0.45, ease: 'power2.out' });
+      navHidden = false;
+    }
+
+    lastScrollY = y;
+  };
+
+  window.addEventListener('scroll', onScroll, { passive: true });
 }

@@ -11,6 +11,7 @@ import lottie from 'lottie-web';
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
   console.log('Young, Wild & Pixel Agency - Loading...');
+  const PAGE_LOADER_ENABLED = false;
 
   gsap.registerPlugin(ScrollTrigger);
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -47,35 +48,388 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize navigation
   initNavigation();
 
-  const heroMascot = document.querySelector('.hero-mascot');
-  if (heroMascot) {
-    gsap.from(heroMascot, {
-      y: 40,
-      duration: 1,
-      ease: 'power1.out'
+  // Hero — new editorial layout animations
+  const heroTagline = document.querySelector('.hero-tagline');
+  const heroPartners = document.querySelector('.hero-partners');
+  const heroGalleryCards = document.querySelectorAll('.hero-gallery-card');
+  const heroLogos = document.querySelector('.hero-logos');
+
+  const initHeroLogosMarquee = () => {
+    if (!heroLogos) return;
+    if (heroLogos.dataset.marqueeReady === '1') return;
+
+    const logos = Array.from(heroLogos.querySelectorAll('.hero-logo'));
+    if (!logos.length) return;
+
+    const track = document.createElement('div');
+    track.className = 'hero-logos-track';
+
+    logos.forEach((logo) => {
+      track.appendChild(logo);
     });
 
-    gsap.to(heroMascot, {
-      y: '-25vw',
-      ease: 'none',
-      scrollTrigger: {
-        trigger: '.hero',
-        start: 'top top',
-        end: 'bottom top',
-        scrub: true,
-        invalidateOnRefresh: true
+    logos.forEach((logo) => {
+      const clone = logo.cloneNode(true);
+      clone.classList.add('is-clone');
+      clone.setAttribute('aria-hidden', 'true');
+      clone.alt = '';
+      track.appendChild(clone);
+    });
+
+    heroLogos.innerHTML = '';
+    heroLogos.appendChild(track);
+    heroLogos.dataset.marqueeReady = '1';
+  };
+
+  initHeroLogosMarquee();
+
+  const heroBrandMark = document.querySelector('.hero-brand-mark');
+  if (heroBrandMark && !prefersReducedMotion) {
+    gsap.from(heroBrandMark, {
+      y: 20,
+      opacity: 0,
+      duration: 0.8,
+      ease: 'power2.out',
+      delay: 0.1
+    });
+  }
+
+  if (heroTagline && !prefersReducedMotion) {
+    gsap.from(heroTagline, {
+      y: 16,
+      opacity: 0,
+      duration: 0.8,
+      ease: 'power2.out',
+      delay: 0.28
+    });
+  }
+
+  if (heroPartners && !prefersReducedMotion) {
+    gsap.from(heroPartners.querySelectorAll('.hero-partner'), {
+      y: 10,
+      opacity: 0,
+      duration: 0.5,
+      ease: 'power1.out',
+      stagger: 0.08,
+      delay: 0.5
+    });
+  }
+
+  if (heroGalleryCards.length && !prefersReducedMotion) {
+    gsap.from(heroGalleryCards, {
+      y: 24,
+      opacity: 0,
+      duration: 0.7,
+      ease: 'power2.out',
+      stagger: 0.1,
+      delay: 0.6
+    });
+  }
+
+  // -------------------------------------------------------
+  // Hero gallery — canvas-based pixelation on hover
+  // Works for both <img> and <video> media types
+  // -------------------------------------------------------
+  const initPixelateGallery = () => {
+    const PIXEL_SIZE = 14; // lower = more pixelated
+
+    document.querySelectorAll('.hero-gallery-card').forEach((card) => {
+      const wrapper = card.querySelector('.hero-gallery-img');
+      if (!wrapper) return;
+
+      const media = wrapper.querySelector('img, video');
+      if (!media) return;
+
+      const projectTitle = (card.querySelector('.hero-gallery-name')?.textContent || '').trim();
+      let curtain = wrapper.querySelector('.hero-gallery-curtain');
+      if (!curtain) {
+        curtain = document.createElement('div');
+        curtain.className = 'hero-gallery-curtain';
+        const title = document.createElement('span');
+        title.className = 'hero-gallery-curtain-title';
+        title.textContent = projectTitle;
+        curtain.appendChild(title);
+        wrapper.appendChild(curtain);
       }
-    });
-  }
+      curtain.classList.remove('is-visible');
+      let curtainTimer = null;
 
-  const heroDisplay = document.querySelector('.hero-display');
-  if (heroDisplay) {
-    gsap.fromTo(
-      heroDisplay,
-      { y: 20, scale: 0.98 },
-      { y: 0, scale: 1, duration: 0.8, ease: 'back.out(1.6)' }
-    );
-  }
+      const isVideo = media.tagName === 'VIDEO';
+
+      // Create the canvas overlay once per card
+      const canvas = document.createElement('canvas');
+      canvas.className = 'pixel-canvas';
+      wrapper.appendChild(canvas);
+      const ctx = canvas.getContext('2d');
+
+      let rafId = null;
+      let pixelSize = 0; // animated from 0 → PIXEL_SIZE → 0
+
+      const drawFrame = () => {
+        const w = wrapper.offsetWidth;
+        const h = wrapper.offsetHeight;
+        if (!w || !h) return;
+
+        // Sample grid resolution based on current animated pixel size
+        const ps = Math.max(1, Math.round(pixelSize));
+        const cols = Math.ceil(w / ps);
+        const rows = Math.ceil(h / ps);
+
+        canvas.width = cols;
+        canvas.height = rows;
+        canvas.style.width = w + 'px';
+        canvas.style.height = h + 'px';
+
+        try {
+          ctx.drawImage(media, 0, 0, cols, rows);
+        } catch (_) {
+          // Silently fail (e.g. video not ready yet)
+        }
+      };
+
+      const rafLoop = () => {
+        drawFrame();
+        if (isVideo) rafId = requestAnimationFrame(rafLoop);
+      };
+
+      const startPixelate = () => {
+        if (prefersReducedMotion) return;
+        cancelAnimationFrame(rafId);
+        clearTimeout(curtainTimer);
+        curtain.classList.remove('is-visible');
+        curtainTimer = window.setTimeout(() => {
+          curtain.classList.add('is-visible');
+        }, 300);
+
+        // Tween pixel size 0 → PIXEL_SIZE
+        gsap.to({ ps: 1 }, {
+          ps: PIXEL_SIZE,
+          duration: 0.35,
+          ease: 'power2.out',
+          onUpdate: function () {
+            pixelSize = this.targets()[0].ps;
+            if (!isVideo) drawFrame();
+          },
+          onStart: () => {
+            canvas.classList.add('is-visible');
+            if (isVideo) rafLoop();
+          }
+        });
+      };
+
+      const stopPixelate = () => {
+        if (prefersReducedMotion) return;
+        cancelAnimationFrame(rafId);
+        clearTimeout(curtainTimer);
+        curtain.classList.remove('is-visible');
+
+        gsap.to({ ps: pixelSize }, {
+          ps: 1,
+          duration: 0.25,
+          ease: 'power1.in',
+          onUpdate: function () {
+            pixelSize = this.targets()[0].ps;
+            if (!isVideo) drawFrame();
+          },
+          onComplete: () => {
+            canvas.classList.remove('is-visible');
+          }
+        });
+      };
+
+      // Touch: skip hover (no mouseenter on touch)
+      if (isTouch) return;
+
+      card.addEventListener('mouseenter', startPixelate);
+      card.addEventListener('mouseleave', stopPixelate);
+    });
+  };
+
+  initPixelateGallery();
+
+  // Same pixelation for spotlight
+  const initPixelateSpotlight = () => {
+    const wrap = document.querySelector('.hero-spotlight-img-wrap');
+    if (!wrap || isTouch || prefersReducedMotion) return;
+
+    const media = wrap.querySelector('img, video');
+    if (!media) return;
+
+    const isVideo = media.tagName === 'VIDEO';
+    const PIXEL_SIZE = 14;
+
+    const canvas = document.createElement('canvas');
+    canvas.className = 'pixel-canvas';
+    wrap.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+
+    let rafId = null;
+    let pixelSize = 0;
+
+    const drawFrame = () => {
+      const w = wrap.offsetWidth;
+      const h = wrap.offsetHeight;
+      if (!w || !h) return;
+      const ps = Math.max(1, Math.round(pixelSize));
+      canvas.width = Math.ceil(w / ps);
+      canvas.height = Math.ceil(h / ps);
+      canvas.style.width = w + 'px';
+      canvas.style.height = h + 'px';
+      try { ctx.drawImage(media, 0, 0, canvas.width, canvas.height); } catch (_) {}
+    };
+
+    const rafLoop = () => { drawFrame(); if (isVideo) rafId = requestAnimationFrame(rafLoop); };
+
+    wrap.addEventListener('mouseenter', () => {
+      cancelAnimationFrame(rafId);
+      gsap.to({ ps: 1 }, {
+        ps: PIXEL_SIZE, duration: 0.35, ease: 'power2.out',
+        onUpdate: function () { pixelSize = this.targets()[0].ps; if (!isVideo) drawFrame(); },
+        onStart: () => { canvas.classList.add('is-visible'); if (isVideo) rafLoop(); }
+      });
+    });
+
+    wrap.addEventListener('mouseleave', () => {
+      cancelAnimationFrame(rafId);
+      gsap.to({ ps: pixelSize }, {
+        ps: 1, duration: 0.25, ease: 'power1.in',
+        onUpdate: function () { pixelSize = this.targets()[0].ps; if (!isVideo) drawFrame(); },
+        onComplete: () => { canvas.classList.remove('is-visible'); }
+      });
+    });
+  };
+
+  initPixelateSpotlight();
+
+  const initHomeScrollMediaParallax = () => {
+    if (prefersReducedMotion) return;
+    if (!document.querySelector('main .hero')) return;
+
+    const targets = [
+      { selector: '.hero-gallery-img', shift: 18 },
+      { selector: '.hero-spotlight-img-wrap', shift: 16 },
+      { selector: '.work-image', shift: 14 },
+      { selector: '.ai-intro-media', shift: 14 },
+      { selector: '.ai-service-media', shift: 12 },
+      { selector: '.hero-display', shift: 10 },
+      { selector: '.footer-display', shift: 8 }
+    ];
+
+    targets.forEach(({ selector, shift }) => {
+      document.querySelectorAll(selector).forEach((element) => {
+        gsap.fromTo(
+          element,
+          { '--media-parallax-y': `${shift}px` },
+          {
+            '--media-parallax-y': `${-shift}px`,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: element,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: 1.2,
+              invalidateOnRefresh: true
+            }
+          }
+        );
+      });
+    });
+  };
+
+  initHomeScrollMediaParallax();
+
+  // -------------------------------------------------------
+  // AI Sections — scroll-triggered animations
+  // -------------------------------------------------------
+  const initAIAnimations = () => {
+    if (prefersReducedMotion) return;
+
+    // Blob parallax
+    const blob = document.querySelector('.ai-blob');
+    if (blob) {
+      gsap.to(blob, {
+        y: -60,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.ai-intro-visual',
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: true
+        }
+      });
+    }
+
+    // Workflow window — float up on entry
+    const aiWindow = document.querySelector('.ai-window');
+    if (aiWindow) {
+      gsap.from(aiWindow, {
+        y: 50,
+        opacity: 0,
+        duration: 1,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: aiWindow,
+          start: 'top 80%',
+          toggleActions: 'play none none reverse'
+        }
+      });
+    }
+
+    // Workflow nodes — stagger in
+    const nodes = document.querySelectorAll('.ai-node');
+    if (nodes.length) {
+      gsap.from(nodes, {
+        scale: 0.7,
+        opacity: 0,
+        duration: 0.5,
+        ease: 'back.out(1.8)',
+        stagger: 0.1,
+        scrollTrigger: {
+          trigger: '.ai-window',
+          start: 'top 75%',
+          toggleActions: 'play none none reverse'
+        }
+      });
+    }
+
+    // Connection lines — draw in
+    const lines = document.querySelectorAll('.ai-connections line, .ai-connections path');
+    if (lines.length) {
+      lines.forEach((line) => {
+        const len = line.getTotalLength ? line.getTotalLength() : 200;
+        gsap.set(line, { strokeDasharray: len, strokeDashoffset: len });
+        gsap.to(line, {
+          strokeDashoffset: 0,
+          duration: 0.8,
+          ease: 'power1.inOut',
+          scrollTrigger: {
+            trigger: '.ai-window',
+            start: 'top 70%',
+            toggleActions: 'play none none reverse'
+          }
+        });
+      });
+    }
+
+    // AI service cards — stagger up
+    const serviceCards = document.querySelectorAll('.ai-service-card');
+    if (serviceCards.length) {
+      gsap.from(serviceCards, {
+        y: 40,
+        opacity: 0,
+        duration: 0.7,
+        ease: 'power2.out',
+        stagger: 0.12,
+        scrollTrigger: {
+          trigger: '.ai-services-grid',
+          start: 'top 82%',
+          toggleActions: 'play none none reverse'
+        }
+      });
+    }
+  };
+
+  initAIAnimations();
 
   const introText = document.querySelector('.intro-text');
   const splitIntroLines = () => {
@@ -366,10 +720,123 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
+  const initHeaderDescriptionsReveal = () => {
+    const setupReveal = ({
+      container,
+      items,
+      trigger,
+      start = 'top 85%',
+      end = 'top 55%',
+      delay = 0.12,
+      duration = 0.95,
+      y = 20,
+      stagger = 0.12
+    }) => {
+      if (!container || !items.length || !trigger) return;
+      if (container._textRevealTimeline) {
+        container._textRevealTimeline.kill();
+        container._textRevealTimeline = null;
+      }
+
+      if (prefersReducedMotion) {
+        gsap.set(items, { opacity: 1, y: 0, clearProps: 'transform' });
+        return;
+      }
+
+      gsap.set(items, { opacity: 0, y });
+      container._textRevealTimeline = gsap.timeline({
+        scrollTrigger: {
+          trigger,
+          start,
+          end,
+          toggleActions: 'play none none reverse'
+        }
+      }).to(items, {
+        opacity: 1,
+        y: 0,
+        duration,
+        ease: 'power3.out',
+        stagger
+      }, delay);
+    };
+
+    // AI headers: description appears just after the animated title
+    document
+      .querySelectorAll('.ai-intro-desc, .ai-services-desc')
+      .forEach((desc) => {
+        const header = desc.closest('.ai-intro-header, .ai-services-header');
+        const title = header ? header.querySelector('[data-animated-text]') : null;
+        setupReveal({
+          container: desc,
+          items: [desc],
+          trigger: title || desc,
+          delay: 0.28,
+          duration: 1.05,
+          y: 26,
+          stagger: 0
+        });
+      });
+
+    // Spotlight meta: label then desc
+    document.querySelectorAll('.hero-spotlight-meta').forEach((meta) => {
+      const items = Array.from(
+        meta.querySelectorAll('.hero-spotlight-label, .hero-spotlight-desc')
+      );
+      const trigger = meta.closest('.hero-spotlight') || meta;
+      setupReveal({
+        container: meta,
+        items,
+        trigger,
+        start: 'top 88%',
+        end: 'top 58%',
+        delay: 0.1,
+        duration: 0.95,
+        y: 18,
+        stagger: 0.1
+      });
+    });
+
+    // Similar text pairs: gallery name/tag and work name/year
+    document.querySelectorAll('.hero-gallery-meta').forEach((meta) => {
+      const items = Array.from(
+        meta.querySelectorAll('.hero-gallery-name, .hero-gallery-tag')
+      );
+      const trigger = meta.closest('.hero-gallery-card') || meta;
+      setupReveal({
+        container: meta,
+        items,
+        trigger,
+        start: 'top 92%',
+        end: 'top 62%',
+        delay: 0.14,
+        duration: 0.85,
+        y: 16,
+        stagger: 0.08
+      });
+    });
+
+    document.querySelectorAll('.work-meta').forEach((meta) => {
+      const items = Array.from(meta.querySelectorAll('.work-name, .work-year'));
+      const trigger = meta.closest('.work-card') || meta;
+      setupReveal({
+        container: meta,
+        items,
+        trigger,
+        start: 'top 92%',
+        end: 'top 62%',
+        delay: 0.14,
+        duration: 0.85,
+        y: 16,
+        stagger: 0.08
+      });
+    });
+  };
+
   if (animatedTextElements.length) {
     const ready = document.fonts ? document.fonts.ready : Promise.resolve();
     ready.then(() => {
       initAnimatedText();
+      initHeaderDescriptionsReveal();
       ScrollTrigger.refresh();
     });
 
@@ -378,6 +845,7 @@ document.addEventListener('DOMContentLoaded', () => {
       clearTimeout(animatedResizeTimer);
       animatedResizeTimer = setTimeout(() => {
         initAnimatedText();
+        initHeaderDescriptionsReveal();
         ScrollTrigger.refresh();
       }, 150);
     });
@@ -745,6 +1213,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const initPageLoader = () => {
     const loader = document.querySelector('#page-loader');
     if (!loader) return;
+    if (!PAGE_LOADER_ENABLED) {
+      loader.remove();
+      document.body.classList.remove('is-loading');
+      return;
+    }
 
     const path = window.location.pathname.replace(/\/+$/, '');
     const homePaths = new Set([
@@ -841,26 +1314,6 @@ document.addEventListener('DOMContentLoaded', () => {
         ease: 'back.out(1.7)',
         duration: 0.6,
         stagger: 0.2,
-        scrollTrigger: {
-          trigger: '.services-section',
-          start: 'top 75%',
-          toggleActions: 'play none none none'
-        }
-      }
-    );
-  }
-
-  const servicesPanel = document.querySelector('.services-panel');
-  if (servicesPanel) {
-    gsap.fromTo(
-      servicesPanel,
-      { opacity: 0, y: 16, scale: 0.98 },
-      {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        duration: 0.8,
-        ease: 'back.out(1.6)',
         scrollTrigger: {
           trigger: '.services-section',
           start: 'top 75%',
