@@ -221,6 +221,28 @@ p {
   line-height: 1.6;
 }
 
+.section-adlib {
+  margin: 0 0 0.8rem;
+  font-family: 'Pix32', monospace;
+  font-size: 0.8em;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text);
+  opacity: 0.75;
+}
+
+.section-adlib-text {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0;
+}
+
+.section-adlib-char {
+  display: inline-block;
+  will-change: transform, opacity, filter;
+}
+
 /* ==============================================
    RESET & DEFAULTS
    ============================================== */
@@ -235,40 +257,90 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Page transitions (View Transitions API) */
-@supports (view-transition-name: root) {
-  :root {
-    view-transition-name: root;
-  }
+/* Page transitions */
+.page-transition-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  overflow: hidden;
+}
 
-  @view-transition {
-    navigation: auto;
-  }
+.page-transition-overlay.is-active {
+  opacity: 1;
+  visibility: visible;
+}
 
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation-duration: 900ms;
-    animation-timing-function: cubic-bezier(0.2, 0.9, 0.25, 1);
-    animation-fill-mode: both;
-  }
+html.page-transition-pending body > *:not(#page-transition-overlay) {
+  opacity: 0;
+}
 
-  ::view-transition-old(root) {
-    animation-name: page-slide-up;
-  }
+.page-transition-snapshot {
+  position: absolute;
+  inset: 0;
+  background: var(--color-bg);
+  opacity: 0;
+  will-change: opacity;
+  transform: translateZ(0);
+}
 
-  ::view-transition-new(root) {
-    animation-name: page-slide-in;
-  }
+.page-transition-snapshot-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  image-rendering: pixelated;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
 
-  @keyframes page-slide-up {
-    from { transform: translateY(0); opacity: 1; }
-    to { transform: translateY(-100%); opacity: 1; }
-  }
+.page-transition-curtain {
+  position: absolute;
+  inset: 0;
+  background-color: #7b0b0b;
+  overflow: hidden;
+  color: var(--color-text);
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
 
-  @keyframes page-slide-in {
-    from { transform: translateY(100%); opacity: 1; }
-    to { transform: translateY(0); opacity: 1; }
-  }
+.page-transition-curtain::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: none;
+}
+
+.page-transition-curtain-title,
+.page-transition-curtain-arrow {
+  position: absolute;
+  z-index: 1;
+  line-height: 1;
+}
+
+.page-transition-curtain-title {
+  top: clamp(0.9rem, 2vw, 1.4rem);
+  left: clamp(0.9rem, 2vw, 1.4rem);
+  max-width: min(70vw, 14ch);
+  font-family: 'PPMori', sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.2rem, 3vw, 2.8rem);
+  line-height: 0.95;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  white-space: normal;
+}
+
+.page-transition-curtain-arrow {
+  right: clamp(0.8rem, 1.6vw, 1.2rem);
+  bottom: clamp(0.65rem, 1.5vw, 1rem);
+  font-size: clamp(1.4rem, 2.4vw, 2rem);
+}
+
+body.is-page-transitioning {
+  overflow: hidden;
 }
 
 /* ==============================================

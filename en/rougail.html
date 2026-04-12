@@ -17,6 +17,7 @@
     gtag('config', 'G-565HWV3LKN');
   </script>
   <meta charset="UTF-8">
+  <script>try { if (sessionStorage.getItem("page-transition-state")) document.documentElement.classList.add("page-transition-pending"); } catch (_) {}</script>
   <meta name="view-transition" content="same-origin">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="alternate" hreflang="en" href="https://youngwildandpixels.com/en/rougail.html">
@@ -33,7 +34,7 @@
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="/src/css/layout/header.css">
   <link rel="stylesheet" href="/src/css/pages/work.css">
-  <link rel="stylesheet" href="/src/css/pages/hero.css">
+  <link rel="stylesheet" href="/src/css/pages/project.css">
 
   <title>Le Rougail - Young, Wild & Pixel Agency</title>
 </head>
@@ -77,71 +78,67 @@
 
   <!-- Main Content -->
   <main>
-    <section class="work-hero">
-      <div class="work-hero-inner">
-        <div class="work-hero-copy">
-          <div class="project-hero-row">
-            <h1 class="work-hero-eyebrow" data-animated-text>Le Rougail <br> <span class="work-hero-title-dks">Restaurant</span></h1>
-          </div>
-        </div>
-        <div class="work-hero-text">
+    <!-- Hero -->
+    <section class="proj-hero">
+      <div class="proj-hero-meta">
+        <span>Web Design</span>
+        <span class="proj-hero-meta-sep">/</span>
+        <span>Brand Identity</span>
+        <span class="proj-hero-meta-sep">/</span>
+        <span>2024</span>
+      </div>
+      <h1 class="proj-hero-title" data-animated-text>Le Rougail<br><span class="work-hero-title-dks">Restaurant</span></h1>
+      <div class="proj-hero-body">
+        <div class="proj-hero-desc">
           <p>Le Rougail’s visual identity and website were crafted from the ground up — creative direction, logo, custom illustrations, and Webflow build. The goal was to translate the restaurant’s soul into a bold yet welcoming digital experience. Colors, shapes, and typography were carefully chosen to reflect warmth, authenticity, and personality, while keeping the interface clear and easy to navigate.</p>
           <p>The result is a vibrant identity that feels both modern and rooted. Playful illustrations meet a structured layout, creating a balance between character and clarity. A brand that feels alive on screen, just like it does on the plate. Because when design tells a story, you can almost taste it.</p>
         </div>
-        <div class="project-hero-cta-row">
-          <a class="project-hero-cta project-hero-cta--back" href="work.html">Back to works</a>
+        <div class="proj-hero-actions">
+          <a class="proj-cta-back" href="work.html">Back to works</a>
         </div>
       </div>
     </section>
 
-    <section class="work-marquee" aria-hidden="true">
-      <div class="work-marquee-track">
-        <div class="work-marquee-group">
-          <span>Le Rougail /</span>
-          <span>Restaurant /</span>
-          <span>Le Rougail /</span>
-          <span>Restaurant /</span>
-          <span>Le Rougail /</span>
-          <span>Restaurant /</span>
+    <!-- Cover -->
+    <div class="proj-cover">
+      <div class="proj-cover-media">
+        <img src="/img/work/rougail2.jpg" alt="Le Rougail">
+      </div>
+    </div>
+
+    <!-- Content blocks -->
+    <div class="proj-content">
+      <div class="proj-block proj-block--duo">
+        <div class="proj-media-wrap">
+          <img src="/img/work/rougail1.jpg" alt="Le Rougail" loading="lazy">
         </div>
-        <div class="work-marquee-group" aria-hidden="true">
-          <span>Restaurant /</span>
-          <span>Le Rougail /</span>
-          <span>Restaurant /</span>
-          <span>Le Rougail /</span>
-          <span>Restaurant /</span>
-          <span>Le Rougail /</span>
+        <div class="proj-media-wrap">
+          <img src="/img/work/rougail3.jpg" alt="Le Rougail" loading="lazy">
         </div>
       </div>
-    </section>
+      <div class="proj-block proj-block--full">
+        <div class="proj-media-wrap">
+          <img src="/img/work/rougail4.jpg" alt="Le Rougail" loading="lazy">
+        </div>
+      </div>
+      <div class="proj-block proj-block--center">
+        <div class="proj-media-wrap">
+          <img src="/img/work/rougail5.jpg" alt="Le Rougail" loading="lazy">
+        </div>
+      </div>
+    </div>
 
-    <section class="work-grid">
-      <article class="work-card">
-        <div class="work-card-media">
-          <img src="/img/work/rougail2.jpg" alt="Le Rougail restaurant project image" loading="lazy">
-        </div>
-      </article>
-      <article class="work-card">
-        <div class="work-card-media">
-          <img src="/img/work/rougail1.jpg" alt="Le Rougail restaurant project image" loading="lazy">
-        </div>
-      </article>
-      <article class="work-card">
-        <div class="work-card-media">
-          <img src="/img/work/rougail3.jpg" alt="Le Rougail restaurant project image" loading="lazy">
-        </div>
-      </article>
-      <article class="work-card">
-        <div class="work-card-media">
-          <img src="/img/work/rougail4.jpg" alt="Le Rougail restaurant project image" loading="lazy">
-        </div>
-      </article>
-      <article class="work-card">
-        <div class="work-card-media">
-          <img src="/img/work/rougail5.jpg" alt="Le Rougail restaurant project image" loading="lazy">
-        </div>
-      </article>
-    </section>
+    <!-- Next project -->
+    <a class="proj-next" href="sonnyvizion.html">
+      <div class="proj-next-media">
+        <img src="/img/work/pf02.jpg" alt="Sonnyvizion">
+      </div>
+      <div class="proj-next-overlay">
+        <span class="proj-next-label">Next project</span>
+        <h2 class="proj-next-title">Sonny<span class="work-hero-title-dks">vizion</span></h2>
+        <span class="proj-next-arrow">↗</span>
+      </div>
+    </a>
   </main>
 
   <div class="footer-spacer" aria-hidden="true"></div>
@@ -166,7 +163,7 @@
       <div class="footer-left">
         <img src="/img/YWP_DISPLAY.png" alt="Young, Wild & Pixel display" class="footer-display">
         <p class="footer-tagline">Partner with a creative agency <br>that's ambitious as you are.</p>
-        <a class="footer-cta" href="mailto:contact@youngwildandpixels.com">Contact Us</a>
+        <div class="footer-contact-links"><a class="footer-cta" href="contact.html">Contact Us</a></div>
       </div>
       <div class="footer-right">
         <div class="footer-col footer-accordion">
@@ -175,6 +172,7 @@
             <a href="index.html">Home</a>
             <a href="work.html">Work</a>
             <a href="index.html#services">Services</a>
+            <a href="blog.html">Blog</a>
           </div>
         </div>
         <div class="footer-col footer-accordion">

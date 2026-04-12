@@ -3,6 +3,10 @@
    ============================================== */
 
 import { initNavigation } from './src/js/modules/navigation.js';
+import { initBlog } from './src/js/modules/blog.js';
+import { initArticle } from './src/js/modules/article.js';
+import { initProjectMedia } from './src/js/modules/projectMedia.js';
+import { initProject } from './src/js/modules/project.js';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
@@ -13,10 +17,14 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log('Young, Wild & Pixel Agency - Loading...');
   const PAGE_LOADER_ENABLED = true;
   const SITE_LOADER_SEEN_KEY = 'site-loader-seen';
+  const PAGE_TRANSITION_STATE_KEY = 'page-transition-state';
+  const PAGE_TRANSITION_MAX_AGE = 12000;
+  let html2canvasModulePromise;
 
   gsap.registerPlugin(ScrollTrigger);
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+  const PROJECT_IMAGE_HOVER_ENABLED = false;
   const homePaths = new Set([
     '',
     '/index.html',
@@ -50,8 +58,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const isFrench = (document.documentElement.lang || '').toLowerCase().startsWith('fr');
     const title = isFrench
-      ? `Relax,<br><span class="loader-dks">ca</span> arrive !`
-      : `Relax,<br><span class="loader-dks">it's</span> coming!`;
+      ? `Relax,<br>ca arrive !`
+      : `Relax,<br>it's coming!`;
 
     loader = document.createElement('div');
     loader.id = 'page-loader';
@@ -87,6 +95,237 @@ document.addEventListener('DOMContentLoaded', () => {
     if (barFill) gsap.set(barFill, { scaleX: 0 });
     if (percentEl) percentEl.textContent = '0%';
   };
+  const readPageTransitionState = () => {
+    const raw = sessionStorage.getItem(PAGE_TRANSITION_STATE_KEY);
+    if (!raw) return null;
+
+    try {
+      const parsed = JSON.parse(raw);
+      if (!parsed?.timestamp || Date.now() - parsed.timestamp > PAGE_TRANSITION_MAX_AGE) {
+        sessionStorage.removeItem(PAGE_TRANSITION_STATE_KEY);
+        return null;
+      }
+      return parsed;
+    } catch {
+      sessionStorage.removeItem(PAGE_TRANSITION_STATE_KEY);
+      return null;
+    }
+  };
+  const getPageTransitionLabel = (link, url) => {
+    const textCandidates = [
+      link.querySelector('.hero-gallery-name')?.textContent,
+      link.querySelector('.hero-spotlight-label')?.textContent,
+      link.querySelector('.work-name')?.textContent,
+      link.querySelector('.work-card-label')?.textContent,
+      link.getAttribute('aria-label'),
+      link.textContent
+    ];
+    const matchedText = textCandidates
+      .map((value) => value?.replace(/\s+/g, ' ').trim())
+      .find((value) => value && value.length);
+
+    if (matchedText) return matchedText;
+
+    const slug = url.pathname.split('/').filter(Boolean).pop()?.replace('.html', '') || 'Page';
+    return slug.replace(/[-_]+/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
+  };
+  const clearPageTransitionState = () => {
+    sessionStorage.removeItem(PAGE_TRANSITION_STATE_KEY);
+  };
+  const createPageTransitionOverlay = () => {
+    let overlay = document.querySelector('#page-transition-overlay');
+    if (overlay) return overlay;
+
+    overlay = document.createElement('div');
+    overlay.id = 'page-transition-overlay';
+    overlay.className = 'page-transition-overlay';
+    overlay.setAttribute('aria-hidden', 'true');
+    overlay.innerHTML = `
+      <div class="page-transition-snapshot">
+        <canvas class="page-transition-snapshot-canvas"></canvas>
+      </div>
+      <div class="page-transition-curtain">
+        <span class="page-transition-curtain-title"></span>
+        <span class="page-transition-curtain-arrow" aria-hidden="true">↘</span>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+    return overlay;
+  };
+  const getPageTransitionParts = (overlay) => ({
+    snapshot: overlay.querySelector('.page-transition-snapshot'),
+    snapshotCanvas: overlay.querySelector('.page-transition-snapshot-canvas'),
+    curtain: overlay.querySelector('.page-transition-curtain'),
+    curtainTitle: overlay.querySelector('.page-transition-curtain-title')
+  });
+  const resetPageTransitionOverlay = (overlay) => {
+    if (!overlay) return;
+
+    const { snapshot, curtain } = getPageTransitionParts(overlay);
+    gsap.killTweensOf([overlay, snapshot, curtain]);
+    overlay.classList.remove('is-active');
+    document.body.classList.remove('is-page-transitioning');
+    gsap.set([overlay, snapshot, curtain], { clearProps: 'all' });
+  };
+  const drawPageTransitionSnapshot = (sourceCanvas, targetCanvas) => {
+    const targetWidth = Math.max(1, Math.round(window.innerWidth));
+    const targetHeight = Math.max(1, Math.round(window.innerHeight));
+    const targetContext = targetCanvas.getContext('2d');
+    if (!targetContext) return false;
+
+    targetCanvas.width = targetWidth;
+    targetCanvas.height = targetHeight;
+
+    targetContext.imageSmoothingEnabled = false;
+    targetContext.clearRect(0, 0, targetWidth, targetHeight);
+    targetContext.drawImage(sourceCanvas, 0, 0, targetWidth, targetHeight);
+    return true;
+  };
+  const capturePageTransitionSnapshot = async () => {
+    if (!html2canvasModulePromise) {
+      html2canvasModulePromise = import('html2canvas').then((module) => module.default);
+    }
+
+    const html2canvas = await html2canvasModulePromise;
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const captureScale = Math.max(
+      0.16,
+      Math.min(0.22, 260 / Math.max(viewportWidth, viewportHeight))
+    );
+    return html2canvas(document.body, {
+      backgroundColor: getComputedStyle(document.body).backgroundColor,
+      useCORS: true,
+      logging: false,
+      scale: captureScale,
+      width: viewportWidth,
+      height: viewportHeight,
+      x: window.scrollX,
+      y: window.scrollY,
+      scrollX: 0,
+      scrollY: -window.scrollY,
+      ignoreElements: (element) =>
+        element.id === 'page-transition-overlay' ||
+        element.id === 'page-loader' ||
+        Boolean(element.closest?.('#page-transition-overlay')) ||
+        Boolean(element.closest?.('#page-loader'))
+    });
+  };
+  const playIncomingPageTransition = () => {
+    const pendingTransition = readPageTransitionState();
+    if (!pendingTransition || prefersReducedMotion) {
+      clearPageTransitionState();
+      document.documentElement.classList.remove('page-transition-pending');
+      return;
+    }
+
+    clearPageTransitionState();
+
+    const overlay = createPageTransitionOverlay();
+    const { snapshot, curtain, curtainTitle } = getPageTransitionParts(overlay);
+    overlay.classList.add('is-active');
+    document.body.classList.add('is-page-transitioning');
+    if (curtainTitle) {
+      curtainTitle.textContent = pendingTransition.label || '';
+    }
+
+    document.documentElement.classList.remove('page-transition-pending');
+    gsap.set(overlay, { autoAlpha: 1 });
+    gsap.set(snapshot, { autoAlpha: 0 });
+    gsap.set(curtain, { yPercent: 0 });
+
+    gsap.timeline({
+      delay: 0.03,
+      onComplete: () => {
+        resetPageTransitionOverlay(overlay);
+      }
+    })
+      .to(
+        curtain,
+        {
+          yPercent: -102,
+          duration: 0.42,
+          ease: 'power3.out'
+        },
+        0
+      )
+      .to(
+        overlay,
+        {
+          autoAlpha: 0,
+          duration: 0.18,
+          ease: 'power2.out'
+        },
+        0.18
+      );
+  };
+  let isPageTransitionRunning = false;
+  const runPageTransition = async (href, label = '') => {
+    if (isPageTransitionRunning) return;
+    isPageTransitionRunning = true;
+
+    const overlay = createPageTransitionOverlay();
+    const { snapshot, snapshotCanvas, curtain, curtainTitle } = getPageTransitionParts(overlay);
+
+    overlay.classList.add('is-active');
+    gsap.set(overlay, { autoAlpha: 1 });
+    gsap.set(snapshot, { autoAlpha: 0 });
+    gsap.set(curtain, { yPercent: -102 });
+    if (curtainTitle) {
+      curtainTitle.textContent = label;
+    }
+
+    let snapshotSourceCanvas = null;
+    if (!prefersReducedMotion) {
+      try {
+        snapshotSourceCanvas = await capturePageTransitionSnapshot();
+      } catch {
+        snapshotSourceCanvas = null;
+      }
+    }
+
+    document.body.classList.add('is-page-transitioning');
+
+    const timeline = gsap.timeline({
+      onComplete: () => {
+        sessionStorage.setItem(
+          PAGE_TRANSITION_STATE_KEY,
+          JSON.stringify({
+            href,
+            label,
+            timestamp: Date.now()
+          })
+        );
+        window.location.href = href;
+      }
+    });
+
+    if (snapshotSourceCanvas) {
+      drawPageTransitionSnapshot(snapshotSourceCanvas, snapshotCanvas);
+
+      timeline.to(
+        snapshot,
+        {
+          autoAlpha: 1,
+          duration: 0.18,
+          ease: 'power2.out'
+        },
+        0
+      );
+    }
+
+    const curtainStart = snapshotSourceCanvas ? 0.16 : 0;
+    timeline.to(
+      curtain,
+      {
+        yPercent: 0,
+        duration: 0.28,
+        ease: 'power3.inOut'
+      },
+      curtainStart
+    );
+  };
   let lastViewportWidth = window.innerWidth;
   const hasMeaningfulResize = () => {
     if (!isTouch) return true;
@@ -116,10 +355,67 @@ document.addEventListener('DOMContentLoaded', () => {
     ScrollTrigger.refresh();
   });
 
+  let homeFooterRevealTrigger;
+  const syncHomeFooterReveal = () => {
+    const footer = document.querySelector('.site-footer');
+    const footerSpacer = document.querySelector('.footer-spacer');
+
+    if (!footer || !footerSpacer) return;
+
+    if (homeFooterRevealTrigger) {
+      homeFooterRevealTrigger.kill();
+      homeFooterRevealTrigger = null;
+    }
+
+    const shouldRevealFooter = document.body.classList.contains('home-page')
+      && window.matchMedia('(min-width: 901px)').matches;
+
+    if (!shouldRevealFooter || prefersReducedMotion) {
+      document.documentElement.style.setProperty('--home-footer-reveal-height', '0px');
+      footerSpacer.style.height = '0px';
+      footer.style.setProperty('--footer-reveal-opacity', '1');
+      footer.style.setProperty('--footer-reveal-copy-opacity', '0.76');
+      return;
+    }
+
+    const footerHeight = Math.ceil(footer.getBoundingClientRect().height);
+    document.documentElement.style.setProperty('--home-footer-reveal-height', `${footerHeight}px`);
+    footerSpacer.style.height = `${footerHeight}px`;
+    footer.style.setProperty('--footer-reveal-opacity', '0');
+    footer.style.setProperty('--footer-reveal-copy-opacity', '0');
+
+    homeFooterRevealTrigger = ScrollTrigger.create({
+      trigger: footerSpacer,
+      start: 'top bottom',
+      end: 'bottom bottom',
+      scrub: true,
+      invalidateOnRefresh: true,
+      onUpdate: (self) => {
+        const rawProgress = gsap.utils.clamp(0, 1, (self.progress - 0.78) / 0.22);
+        const contentProgress = rawProgress * rawProgress * rawProgress * (rawProgress * (rawProgress * 6 - 15) + 10);
+        footer.style.setProperty('--footer-reveal-opacity', contentProgress.toFixed(3));
+        footer.style.setProperty('--footer-reveal-copy-opacity', (contentProgress * 0.76).toFixed(3));
+      },
+      onLeave: () => {
+        footer.style.setProperty('--footer-reveal-opacity', '1');
+        footer.style.setProperty('--footer-reveal-copy-opacity', '0.76');
+      },
+      onLeaveBack: () => {
+        footer.style.setProperty('--footer-reveal-opacity', '0');
+        footer.style.setProperty('--footer-reveal-copy-opacity', '0');
+      }
+    });
+  };
+
   // Initialize navigation
   initNavigation();
   if (isHomePath()) {
     createPageLoader();
+  }
+  createPageTransitionOverlay();
+  playIncomingPageTransition();
+  if (!readPageTransitionState()) {
+    document.documentElement.classList.remove('page-transition-pending');
   }
 
   // Hero — new editorial layout animations
@@ -175,6 +471,16 @@ document.addEventListener('DOMContentLoaded', () => {
       duration: 0.8,
       ease: 'power2.out',
       delay: 0.28
+    });
+  }
+
+  if (heroLogos && !prefersReducedMotion) {
+    gsap.from(heroLogos, {
+      y: 12,
+      opacity: 0,
+      duration: 0.9,
+      ease: 'power2.out',
+      delay: 0.42
     });
   }
 
@@ -319,7 +625,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
-  initPixelateGallery();
+  if (PROJECT_IMAGE_HOVER_ENABLED) {
+    initPixelateGallery();
+  }
 
   // Same pixelation for spotlight
   const initPixelateSpotlight = () => {
@@ -396,20 +704,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
-  initPixelateSpotlight();
+  if (PROJECT_IMAGE_HOVER_ENABLED) {
+    initPixelateSpotlight();
+  }
 
   const initHomeScrollMediaParallax = () => {
     if (prefersReducedMotion) return;
     if (!document.querySelector('main .hero')) return;
 
     const targets = [
-      { selector: '.hero-gallery-img', shift: 18 },
-      { selector: '.hero-spotlight-img-wrap', shift: 16 },
-      { selector: '.work-image', shift: 14 },
-      { selector: '.ai-intro-media', shift: 14 },
-      { selector: '.ai-service-media', shift: 12 },
-      { selector: '.hero-display', shift: 10 },
-      { selector: '.footer-display', shift: 8 }
+      { selector: '.hero-gallery-img', shift: 28 },
+      { selector: '.hero-spotlight-img-wrap', shift: 24 },
+      { selector: '.work-image', shift: 22 },
+      { selector: '.ai-intro-media', shift: 20 },
+      { selector: '.ai-service-media', shift: 18 },
+      { selector: '.hero-display', shift: 14 }
     ];
 
     targets.forEach(({ selector, shift }) => {
@@ -435,14 +744,48 @@ document.addEventListener('DOMContentLoaded', () => {
 
   initHomeScrollMediaParallax();
 
+  // -------------------------------------------------------
+  // Project page — parallax on cover + content blocks
+  // -------------------------------------------------------
+  const initProjectPageParallax = () => {
+    if (prefersReducedMotion) return;
+    if (!document.querySelector('.proj-cover, .proj-content')) return;
+
+    const targets = [
+      { selector: '.proj-cover-media', shift: 200 },
+      { selector: '.proj-media-wrap', shift: 200 },
+    ];
+
+    targets.forEach(({ selector, shift }) => {
+      document.querySelectorAll(selector).forEach((el) => {
+        gsap.fromTo(
+          el,
+          { '--media-parallax-y': '0px' },
+          {
+            '--media-parallax-y': `${shift}px`,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: el,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: 1.2,
+              invalidateOnRefresh: true,
+            },
+          }
+        );
+      });
+    });
+  };
+
+  initProjectPageParallax();
+
   const initImageRevealOnScroll = () => {
     const revealSelectors = [
       '.hero-spotlight-img-wrap',
       '.ai-intro-media',
       '.ai-service-media',
       '.work-card-media',
-      '.hero-display',
-      '.footer-display'
+      '.hero-display'
     ];
     const targets = [
       ...new Set(
@@ -536,6 +879,25 @@ document.addEventListener('DOMContentLoaded', () => {
           toggleActions: 'play none none reverse'
         }
       });
+    }
+
+    const aiIntroMedia = document.querySelector('.ai-intro-media');
+    if (aiIntroMedia) {
+      gsap.fromTo(
+        aiIntroMedia,
+        { '--ai-intro-media-width': window.innerWidth <= 768 ? '96%' : '93%' },
+        {
+          '--ai-intro-media-width': '100%',
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: aiIntroMedia,
+            start: 'top 82%',
+            end: 'top 20%',
+            scrub: 1.1,
+            invalidateOnRefresh: true
+          }
+        }
+      );
     }
 
     // Workflow nodes — stagger in
@@ -942,13 +1304,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Spotlight meta: label then desc
     document.querySelectorAll('.hero-spotlight-meta').forEach((meta) => {
-      const items = Array.from(
-        meta.querySelectorAll('.hero-spotlight-label, .hero-spotlight-desc')
-      );
+      const labelItems = Array.from(meta.querySelectorAll('.hero-spotlight-label'));
+      const descItems = Array.from(meta.querySelectorAll('.hero-spotlight-desc'));
       const trigger = meta.closest('.hero-spotlight-card') || meta.closest('.hero-spotlight') || meta;
       setupReveal({
         container: meta,
-        items,
+        items: labelItems,
         trigger,
         start: 'top 88%',
         end: 'top 58%',
@@ -957,17 +1318,32 @@ document.addEventListener('DOMContentLoaded', () => {
         y: 18,
         stagger: 0.1
       });
+      if (descItems.length) {
+        gsap.set(descItems, { opacity: 0, y: 18 });
+        gsap.to(descItems, {
+          opacity: 0.75,
+          y: 0,
+          duration: 0.95,
+          ease: 'power3.out',
+          delay: 0.2,
+          scrollTrigger: {
+            trigger,
+            start: 'top 88%',
+            end: 'top 58%',
+            toggleActions: 'play none none reverse'
+          }
+        });
+      }
     });
 
     // Similar text pairs: gallery name/tag and work name/year
     document.querySelectorAll('.hero-gallery-meta').forEach((meta) => {
-      const items = Array.from(
-        meta.querySelectorAll('.hero-gallery-name, .hero-gallery-tag')
-      );
+      const nameItems = Array.from(meta.querySelectorAll('.hero-gallery-name'));
+      const tagItems = Array.from(meta.querySelectorAll('.hero-gallery-tag'));
       const trigger = meta.closest('.hero-gallery-card') || meta;
       setupReveal({
         container: meta,
-        items,
+        items: nameItems,
         trigger,
         start: 'top 92%',
         end: 'top 62%',
@@ -976,6 +1352,22 @@ document.addEventListener('DOMContentLoaded', () => {
         y: 16,
         stagger: 0.08
       });
+      if (tagItems.length) {
+        gsap.set(tagItems, { opacity: 0, y: 16 });
+        gsap.to(tagItems, {
+          opacity: 0.75,
+          y: 0,
+          duration: 0.85,
+          ease: 'power3.out',
+          delay: 0.22,
+          scrollTrigger: {
+            trigger,
+            start: 'top 92%',
+            end: 'top 62%',
+            toggleActions: 'play none none reverse'
+          }
+        });
+      }
     });
 
     document.querySelectorAll('.work-meta').forEach((meta) => {
@@ -995,11 +1387,73 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
+  const initSectionAdlibBuild = () => {
+    const adlibs = Array.from(document.querySelectorAll('.section-adlib'));
+    if (!adlibs.length) return;
+
+    adlibs.forEach((adlib) => {
+      if (adlib._adlibTimeline) {
+        adlib._adlibTimeline.kill();
+        adlib._adlibTimeline = null;
+      }
+
+      if (!adlib.dataset.adlibOriginalText) {
+        adlib.dataset.adlibOriginalText = adlib.textContent || '';
+      }
+
+      const text = adlib.dataset.adlibOriginalText;
+      adlib.innerHTML = '';
+
+      const textWrap = document.createElement('span');
+      textWrap.className = 'section-adlib-text';
+
+      Array.from(text).forEach((char) => {
+        const charSpan = document.createElement('span');
+        charSpan.className = 'section-adlib-char';
+        charSpan.textContent = char === ' ' ? '\u00A0' : char;
+        textWrap.appendChild(charSpan);
+      });
+
+      adlib.appendChild(textWrap);
+
+      const chars = Array.from(adlib.querySelectorAll('.section-adlib-char'));
+      if (!chars.length) return;
+
+      if (prefersReducedMotion) {
+        gsap.set(chars, { opacity: 1, y: 0, filter: 'blur(0px)' });
+        return;
+      }
+
+      gsap.set(chars, {
+        opacity: 0,
+        y: 4,
+        filter: 'blur(1.5px)'
+      });
+
+      adlib._adlibTimeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: adlib,
+          start: 'top 92%',
+          end: 'top 70%',
+          toggleActions: 'play none none reverse'
+        }
+      }).to(chars, {
+        opacity: 1,
+        y: 0,
+        filter: 'blur(0px)',
+        duration: 0.42,
+        ease: 'steps(3)',
+        stagger: 0.024
+      });
+    });
+  };
+
   if (animatedTextElements.length) {
     const ready = document.fonts ? document.fonts.ready : Promise.resolve();
     ready.then(() => {
       initAnimatedText();
       initHeaderDescriptionsReveal();
+      initSectionAdlibBuild();
       ScrollTrigger.refresh();
     });
 
@@ -1009,6 +1463,7 @@ document.addEventListener('DOMContentLoaded', () => {
       animatedResizeTimer = setTimeout(() => {
         initAnimatedText();
         initHeaderDescriptionsReveal();
+        initSectionAdlibBuild();
         ScrollTrigger.refresh();
       }, 150);
     });
@@ -1312,13 +1767,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     workScrollTrigger = workTimeline.scrollTrigger;
 
-    const footerSpacer = document.querySelector('.footer-spacer');
-    if (footerSpacer) {
-      footerSpacer.style.height = '0px';
-    }
+    syncHomeFooterReveal();
   };
 
   initWorkScroll();
+  syncHomeFooterReveal();
 
   const lottieEls = document.querySelectorAll('[data-lottie]');
   lottieEls.forEach((lottieEl) => {
@@ -1337,17 +1790,46 @@ document.addEventListener('DOMContentLoaded', () => {
       const href = link.getAttribute('href');
       if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
       if (link.hasAttribute('data-no-transition')) return;
+      if (link.hasAttribute('data-transition-init')) return;
+      link.setAttribute('data-transition-init', '1');
       link.addEventListener('click', (event) => {
         if (event.defaultPrevented) return;
         if (link.target === '_blank' || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        if (link.hasAttribute('download')) return;
         const url = new URL(link.href, window.location.href);
         if (url.origin !== window.location.origin) return;
-        sessionStorage.setItem('skip-loader', '1');
+        const currentUrl = new URL(window.location.href);
+        const isSameDocumentHashLink =
+          url.pathname === currentUrl.pathname &&
+          url.search === currentUrl.search &&
+          url.hash &&
+          url.hash !== currentUrl.hash;
+        if (isSameDocumentHashLink) return;
+        if (url.href === currentUrl.href) return;
+
+        event.preventDefault();
+        runPageTransition(url.href, getPageTransitionLabel(link, url));
       });
     });
   };
 
   initPageTransitions();
+
+  // Re-run transitions when dynamic content is rendered
+  document.addEventListener('blog:rendered', () => initPageTransitions());
+  document.addEventListener('projects:rendered', () => {
+    initPageTransitions();
+    initHeaderDescriptionsReveal();
+    ScrollTrigger.refresh();
+  });
+
+  document.addEventListener('project:rendered', () => {
+    initPageTransitions();
+    initAnimatedText();
+    initProjectPageParallax();
+    initHeaderDescriptionsReveal();
+    ScrollTrigger.refresh();
+  });
 
   const initServicesAnchor = () => {
     const links = document.querySelectorAll('a[href="#services"]');
@@ -1552,13 +2034,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       );
 
-      card.addEventListener('mouseenter', () => {
-        gsap.to(overlay, { yPercent: 0, duration: 0.45, ease: 'power2.out' });
-      });
+      if (PROJECT_IMAGE_HOVER_ENABLED) {
+        card.addEventListener('mouseenter', () => {
+          gsap.to(overlay, { yPercent: 0, duration: 0.45, ease: 'power2.out' });
+        });
 
-      card.addEventListener('mouseleave', () => {
-        gsap.to(overlay, { yPercent: -100, duration: 0.45, ease: 'power2.inOut' });
-      });
+        card.addEventListener('mouseleave', () => {
+          gsap.to(overlay, { yPercent: -100, duration: 0.45, ease: 'power2.inOut' });
+        });
+      }
     });
   }
 
@@ -1724,11 +2208,26 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!window.matchMedia('(max-width: 900px)').matches) return;
         const isCollapsed = accordion.classList.toggle('is-collapsed');
         toggle.setAttribute('aria-expanded', String(!isCollapsed));
+        requestAnimationFrame(syncHomeFooterReveal);
       });
     });
     syncFooterAccordions();
     window.addEventListener('resize', syncFooterAccordions);
   }
+
+  window.addEventListener('resize', () => {
+    if (!hasMeaningfulResize()) return;
+    syncHomeFooterReveal();
+  });
+  window.addEventListener('load', syncHomeFooterReveal);
   
+  // Blog — dynamic Sanity loading
+  initBlog();
+  initArticle();
+
+  // Project media — swap images/videos from Sanity
+  initProjectMedia();
+  initProject();
+
   console.log('✓ App initialized');
 });

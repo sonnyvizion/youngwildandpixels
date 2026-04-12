@@ -17,6 +17,7 @@
     gtag('config', 'G-565HWV3LKN');
   </script>
   <meta charset="UTF-8">
+  <script>try { if (sessionStorage.getItem("page-transition-state")) document.documentElement.classList.add("page-transition-pending"); } catch (_) {}</script>
   <meta name="view-transition" content="same-origin">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="/fav.png">
@@ -40,11 +41,11 @@
   <!-- Stylesheets -->
   
   <title>Young, Wild & Pixel Agency - Modern Web Design</title>
-  <script type="module" crossorigin src="/assets/main-Bth7gKd9.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/main-CAq0tVtM.css">
-  <link rel="stylesheet" crossorigin href="/assets/hero-BydYb_zM.css">
+  <script type="module" crossorigin src="/assets/main-ckiuuaJR.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/main-pBPV-exy.css">
+  <link rel="stylesheet" crossorigin href="/assets/hero-Z2NA5VWK.css">
 </head>
-<body>
+<body class="home-page">
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PCMMDF9C"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -160,48 +161,12 @@
           <h2 class="work-title" data-animated-text>Featured work <br>
 crafted for impact, <br>not noise</h2>
         </div>
-        <div class="work-track">
-          <a class="work-card work-card--wide" href="brenda.html">
-            <div class="work-image">
-              <img src="/assets/brenda-4-COuxB_m5.jpg" alt="Brenda project preview" loading="lazy">
-            </div>
-            <div class="work-meta">
-              <span class="work-name">BRENDA</span>
-              <span class="work-year">2025</span>
-            </div>
-          </a>
-          <a class="work-card" href="sonnyvizion.html">
-            <div class="work-image">
-              <img src="/assets/work-3-CIyokIJE.jpg" alt="Sonnyvizion portfolio preview" loading="lazy">
-            </div>
-            <div class="work-meta">
-              <span class="work-name">SONNYVIZION</span>
-              <span class="work-year">PORTFOLIO 2025</span>
-            </div>
-          </a>
-          <a class="work-card" href="rougail.html">
-            <div class="work-image">
-              <img src="/assets/rougail2-Cef1Kt3Y.jpg" alt="Le Rougail project preview" loading="lazy">
-            </div>
-            <div class="work-meta">
-              <span class="work-name">LE ROUGAIL</span>
-              <span class="work-year">2025</span>
-            </div>
-          </a>
-          <a class="work-card" href="mercure.html" aria-disabled="true" tabindex="-1" style="pointer-events: none; cursor: default;">
-            <div class="work-image">
-              <img src="/assets/mercure-CalG4_IY.jpg" alt="Mercure project preview" loading="lazy">
-            </div>
-            <div class="work-meta">
-              <span class="work-name">MERCURE</span>
-              <span class="work-year">2026</span>
-            </div>
-          </a>
-        </div>
+        <div class="work-track" id="home-gallery" data-lang="en"></div>
         <a class="work-cta" href="work.html">Selected projects</a>
       </div>
     </section>
     <section class="services-section" id="services">
+      <p class="section-adlib">[ SERVICES / STUDIO ]</p>
       <div class="services-title" data-animated-text>We grow <span class="services-title-dks">Brand</span> <br> with intention.</div>
       <div class="services-inner">
         <div class="services-left">
@@ -287,7 +252,7 @@ crafted for impact, <br>not noise</h2>
       <div class="footer-left">
         <img src="/assets/YWP_DISPLAY-CVAKl0fL.png" alt="Young, Wild & Pixel display" class="footer-display">
         <p class="footer-tagline">Partner with a creative agency <br>that's ambitious as you are.</p>
-        <a class="footer-cta" href="mailto:contact@youngwildandpixels.com">Contact Us</a>
+        <div class="footer-contact-links"><a class="footer-cta" href="contact.html">Contact Us</a></div>
       </div>
       <div class="footer-right">
         <div class="footer-col footer-accordion">
@@ -296,6 +261,7 @@ crafted for impact, <br>not noise</h2>
             <a href="index.html">Home</a>
             <a href="work.html">Work</a>
             <a href="#services">Services</a>
+            <a href="blog.html">Blog</a>
           </div>
         </div>
         <div class="footer-col footer-accordion">
