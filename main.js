@@ -3,8 +3,8 @@
    ============================================== */
 
 import { initNavigation } from './src/js/modules/navigation.js';
-import { initBlog } from './src/js/modules/blog.js';
-import { initArticle } from './src/js/modules/article.js';
+// import { initBlog } from './src/js/modules/blog.js';    // TODO: fichier manquant
+// import { initArticle } from './src/js/modules/article.js'; // TODO: fichier manquant
 import { initProjectMedia } from './src/js/modules/projectMedia.js';
 import { initProject } from './src/js/modules/project.js';
 import gsap from 'gsap';
@@ -2221,11 +2221,17 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   window.addEventListener('load', syncHomeFooterReveal);
   
-  // Blog — dynamic Sanity loading
-  initBlog();
-  initArticle();
+  // Blog — dynamic Sanity loading (modules manquants)
+  // initBlog();
+  // initArticle();
 
   // Project media — swap images/videos from Sanity
+  // Re-init parallax after dynamic injection (all elements were empty at first run)
+  document.addEventListener('projects:rendered', () => {
+    initHomeScrollMediaParallax();
+    ScrollTrigger.refresh();
+  });
+
   initProjectMedia();
   initProject();
 

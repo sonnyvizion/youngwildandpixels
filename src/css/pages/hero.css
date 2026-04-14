@@ -404,6 +404,10 @@ body.is-loading {
   line-height: 1.3;
   color: var(--color-text);
   opacity: 0.75;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* --- Spotlight / featured image --- */
@@ -521,6 +525,10 @@ body.is-loading {
   width: 70%;
   color: var(--color-text);
   opacity: 0.75;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* --- See more link --- */
