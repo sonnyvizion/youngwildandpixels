@@ -1,0 +1,337 @@
+/* ==============================================
+   BLOG PAGE — Inspired by home hero gallery
+   ============================================== */
+
+/* ==============================================
+   HERO
+   ============================================== */
+
+.blog-hero {
+  padding: clamp(80px, 9vw, 120px) 2% clamp(3rem, 6vw, 5rem);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.2rem, 2vw, 2rem);
+  border-bottom: 2px solid var(--color-text);
+}
+
+.blog-hero-adlib {
+  margin: 0;
+}
+
+.blog-hero-title {
+  margin: 0;
+  font-family: 'PPMori', sans-serif;
+  font-weight: 900;
+  font-size: clamp(2.6rem, 6vw, 7rem);
+  line-height: 0.92;
+  letter-spacing: 0.01em;
+  color: var(--color-text);
+}
+
+.blog-hero-dks {
+  font-family: 'DKS Grooveziilla', serif;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.blog-hero-desc {
+  max-width: 54ch;
+  font-family: 'PPMori', sans-serif;
+  font-weight: 400;
+  font-size: clamp(0.9rem, 1.2vw, 1.05rem);
+  line-height: 1.45;
+  color: var(--color-text);
+  opacity: 0.75;
+  margin: 0;
+}
+
+/* ==============================================
+   GALLERY GRID — like hero-gallery
+   ============================================== */
+
+.blog-grid-adlib {
+  margin: clamp(1.2rem, 2.2vw, 1.8rem) 2% clamp(0.8rem, 1.4vw, 1.2rem);
+}
+
+.blog-grid-note {
+  margin: 0 2% clamp(1.5rem, 2.5vw, 2rem);
+  font-family: 'PPMori', sans-serif;
+  font-weight: 400;
+  font-size: clamp(0.85rem, 1.2vw, 1.05rem);
+  line-height: 1.3;
+  color: var(--color-text);
+  opacity: 0.55;
+}
+
+.blog-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(0.5rem, 1.2vw, 1rem);
+  padding: 0 2%;
+  padding-bottom: clamp(4rem, 8vw, 8rem);
+}
+
+/* ==============================================
+   BLOG CARD — same structure as hero-gallery-card
+   ============================================== */
+
+.blog-gallery-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Image / placeholder area */
+.blog-gallery-img {
+  overflow: hidden;
+  background-color: var(--color-gray-light);
+  position: relative;
+}
+
+.blog-gallery-img img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transform: scale(1.08);
+  transform-origin: center center;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.blog-gallery-card:hover .blog-gallery-img img {
+  transform: scale(1.14);
+}
+
+/* Placeholder — no image yet */
+.blog-gallery-img--placeholder {
+  aspect-ratio: 4 / 3;
+  background-color: rgba(255, 101, 101, 0.08);
+}
+
+/* Bottom gradient overlay */
+.blog-gallery-img::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 55%;
+  background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Arrow — bottom right */
+.blog-gallery-img::after {
+  content: '\2198';
+  position: absolute;
+  bottom: 0.6rem;
+  right: 0.7rem;
+  font-size: 1.6rem;
+  color: var(--color-text);
+  pointer-events: none;
+  z-index: 2;
+  line-height: 1;
+}
+
+/* Curtain — slides down on hover like hero-gallery-curtain */
+.blog-gallery-curtain {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: clamp(0.8rem, 1.6vw, 1.2rem);
+  background-color: #7b0b0b;
+  color: var(--color-text);
+  pointer-events: none;
+  transform: translateY(-102%);
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.blog-gallery-card:hover .blog-gallery-curtain {
+  transform: translateY(0);
+}
+
+.blog-gallery-curtain-title {
+  font-family: 'PPMori', sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.2rem, 2.2vw, 2.2rem);
+  line-height: 0.95;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--color-text);
+}
+
+/* Badge "Bientôt" */
+.blog-gallery-badge {
+  position: absolute;
+  top: 0.7rem;
+  left: 0.7rem;
+  z-index: 11;
+  background-color: var(--color-text);
+  color: var(--color-bg);
+  font-family: 'Pix32', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  pointer-events: none;
+}
+
+/* Meta below card */
+.blog-gallery-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.blog-gallery-category {
+  font-family: 'PPMori', sans-serif;
+  font-weight: 600;
+  font-size: clamp(0.65rem, 0.9vw, 0.75rem);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text);
+}
+
+.blog-gallery-title {
+  font-family: 'PPMori', sans-serif;
+  font-weight: 400;
+  font-size: clamp(0.8rem, 1.05vw, 0.95rem);
+  line-height: 1.35;
+  color: var(--color-text);
+  opacity: 0.7;
+}
+
+/* ==============================================
+   LOADING STATE
+   ============================================== */
+
+.blog-gallery-loading {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 6rem 0;
+}
+
+.blog-gallery-loading-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-text);
+  opacity: 0.3;
+  animation: blog-dot-pulse 1.2s ease-in-out infinite;
+}
+
+.blog-gallery-loading-dot:nth-child(2) { animation-delay: 0.2s; }
+.blog-gallery-loading-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes blog-dot-pulse {
+  0%, 80%, 100% { opacity: 0.3; transform: scale(1); }
+  40% { opacity: 1; transform: scale(1.25); }
+}
+
+/* Placeholder card */
+.blog-gallery-card--placeholder {
+  pointer-events: none;
+}
+
+/* Read time / date line */
+.blog-gallery-read {
+  font-family: 'PPMori', sans-serif;
+  font-size: clamp(0.62rem, 0.85vw, 0.72rem);
+  color: var(--color-text);
+  opacity: 0.45;
+  letter-spacing: 0.04em;
+}
+
+/* ==============================================
+   CTA BAND
+   ============================================== */
+
+.blog-cta {
+  border-top: 2px solid var(--color-text);
+  padding: clamp(4rem, 8vw, 8rem) 2%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.blog-cta-adlib {
+  margin: 0;
+}
+
+.blog-cta-title {
+  font-family: 'PPMori', sans-serif;
+  font-weight: 900;
+  font-size: clamp(2rem, 4vw, 4rem);
+  line-height: 1;
+  color: var(--color-text);
+  max-width: 16ch;
+  margin: 0;
+}
+
+.blog-cta-desc {
+  font-family: 'PPMori', sans-serif;
+  font-weight: 400;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  color: var(--color-text);
+  opacity: 0.65;
+  max-width: 46ch;
+  margin: 0;
+}
+
+.blog-cta-btn {
+  display: inline-block;
+  padding: 0.75rem 2.2rem;
+  border: 2px solid var(--color-text);
+  border-radius: 999px;
+  color: var(--color-text);
+  font-family: 'PPMori', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  transition: padding 0.45s cubic-bezier(0.22, 1.7, 0.36, 1),
+    transform 0.45s cubic-bezier(0.22, 1.7, 0.36, 1),
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.blog-cta-btn:hover {
+  padding-left: 3rem;
+  padding-right: 3rem;
+  transform: translateY(-4px);
+  background-color: var(--color-text);
+  color: var(--color-bg);
+}
+
+/* ==============================================
+   RESPONSIVE
+   ============================================== */
+
+@media (max-width: 900px) {
+  .blog-gallery {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .blog-gallery {
+    grid-template-columns: 1fr;
+  }
+
+  .blog-hero-title {
+    font-size: clamp(2.4rem, 10vw, 3.6rem);
+  }
+}
