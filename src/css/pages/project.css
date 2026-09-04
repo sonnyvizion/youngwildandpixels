@@ -163,6 +163,99 @@
   will-change: transform;
 }
 
+/* ─── CASE STUDY ────────────────────────────────────────── */
+.proj-case {
+  padding: clamp(2rem, 5vw, 5rem) 4%;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2rem, 4vw, 3.5rem);
+}
+
+.proj-case-subtitle {
+  font-family: 'PPMori', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #FF6565;
+  opacity: 0.55;
+}
+
+.proj-case-block {
+  max-width: 62ch;
+}
+
+.proj-case-block h3 {
+  font-family: 'PPMori', sans-serif;
+  font-weight: 600;
+  font-size: clamp(1.1rem, 1.6vw, 1.5rem);
+  color: #FF6565;
+  margin: 0 0 0.6em;
+}
+
+.proj-case-block p {
+  font-family: 'PPMori', sans-serif;
+  font-weight: 400;
+  font-size: clamp(0.9rem, 1.1vw, 1.05rem);
+  line-height: 1.4;
+  color: #FF6565;
+  opacity: 0.85;
+  margin: 0;
+}
+
+.proj-case-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: clamp(1.2rem, 2vw, 2rem);
+}
+
+.proj-case-step-num {
+  font-family: 'PPMori', sans-serif;
+  font-weight: 900;
+  font-size: 0.85rem;
+  color: #FF6565;
+  opacity: 0.4;
+  margin-bottom: 0.4em;
+  display: block;
+}
+
+.proj-case-step h4 {
+  font-family: 'PPMori', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #FF6565;
+  margin: 0 0 0.4em;
+}
+
+.proj-case-step p {
+  font-family: 'PPMori', sans-serif;
+  font-size: 0.88rem;
+  line-height: 1.35;
+  color: #FF6565;
+  opacity: 0.75;
+  margin: 0;
+}
+
+.proj-case-role {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.proj-case-role span {
+  display: inline-flex;
+  padding: 0.4rem 1rem;
+  border: 1px solid #FF6565;
+  border-radius: 999px;
+  font-family: 'PPMori', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #FF6565;
+  opacity: 0.75;
+}
+
 /* ─── CONTENT BLOCKS ────────────────────────────────────── */
 .proj-content {
   display: flex;
@@ -354,6 +447,10 @@
 
   .proj-block--center {
     width: 100%;
+  }
+
+  .proj-case-steps {
+    grid-template-columns: 1fr;
   }
 
   .proj-next {
