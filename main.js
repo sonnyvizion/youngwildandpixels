@@ -753,7 +753,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const targets = [
       { selector: '.proj-cover-media', shift: 200 },
-      { selector: '.proj-media-wrap', shift: 200 },
+      { selector: '.proj-media-wrap', shift: 80 },
     ];
 
     targets.forEach(({ selector, shift }) => {
