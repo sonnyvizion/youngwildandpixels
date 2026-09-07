@@ -2149,8 +2149,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const loopWidth = track.scrollWidth;
       if (!loopWidth) return;
 
-      while (track.scrollWidth < container.clientWidth + loopWidth) {
+      let lastWidth = track.scrollWidth;
+      let safety = 0;
+      while (track.scrollWidth < container.clientWidth + loopWidth && safety < 40) {
         track._marqueeOriginals.forEach((node) => track.appendChild(node.cloneNode(true)));
+        if (track.scrollWidth <= lastWidth) break; // width isn't growing (e.g. content wraps instead of overflowing) — bail out
+        lastWidth = track.scrollWidth;
+        safety += 1;
       }
 
       const speed = track.classList.contains('footer-marquee-track') ? 70 : 85;
